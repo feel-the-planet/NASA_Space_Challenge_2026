@@ -45,9 +45,9 @@
 ### A. Hardware, modelos 3D y mapas — Integrante 1
 
 - [x] **P0** Contar con un modelo inicial de relieve terrestre.
-- [ ] **P0** Definir dimensiones de impresión, orientación y proyección cartográfica (preferible equirectangular para la primera versión).
+- [x] **P0** Definir dimensiones de impresión, orientación y proyección cartográfica (preferible equirectangular para la primera versión).
 - [ ] **P0** Comprobar que el mapa puede registrarse con la cámara y no produce oclusiones excesivas.
-- [ ] **P0** Imprimir/ensamblar y fijar el mapa; validar estabilidad del soporte cenital.
+- [x] **P0** Imprimir/ensamblar y fijar el mapa; validar estabilidad del soporte cenital.
 - [ ] **P0** Diseñar y montar botonera mínima (selección de variables y controles necesarios).
 - [ ] **P0** Probar comunicación física de botones → aplicación.
 - [ ] **P1** Publicar STL, archivos editables, orientación de impresión y parámetros recomendados.
@@ -59,8 +59,8 @@
 
 - [x] **P0** Prototipo de detección del índice con cámara.
 - [x] **P0** Prototipo de generación de tonos por modo.
-- [ ] **P0** Calibrar perspectiva de cámara (esquinas o marcadores ArUco).
-- [ ] **P0** Transformar píxeles → coordenadas normalizadas → latitud/longitud, según proyección del mapa.
+- [x] **P0** Calibrar perspectiva de cámara (esquinas o marcadores ArUco).
+- [x] **P0** Transformar píxeles → coordenadas normalizadas → latitud/longitud, según proyección del mapa.
 - [ ] **P0** Conectar la posición del índice a la consulta del dato científico.
 - [ ] **P0** Mostrar en UI variable, valor, unidad, ubicación, fecha y fuente de datos.
 - [ ] **P0** Integrar el selector de variables con botonera y/o controles digitales.
@@ -85,7 +85,7 @@
 
 ### D. Repositorio, documentación y sitio — Integrante 4
 
-- [ ] **P0** Crear repositorio público del proyecto y enlazar el repositorio de seguimiento.
+- [x] **P0** Crear repositorio público del proyecto y enlazar el repositorio de seguimiento.
 - [ ] **P0** Publicar README en inglés: problema, propuesta, estado, instalación y demostración.
 - [ ] **P0** Organizar código, hardware, documentación, datos de ejemplo y demo.
 - [ ] **P0** Añadir instrucciones de ejecución mínimas y dependencias versionadas.
@@ -99,7 +99,7 @@
 
 ### E. Integración, validación y entrega — Integrante 5 (coordinación)
 
-- [ ] **P0** Confirmar roles y delimitar alcance mínimo viable (MVP).
+- [x] **P0** Confirmar roles y delimitar alcance mínimo viable (MVP).
 - [ ] **P0** Probar el flujo completo: dedo → ubicación → dato NASA → sonido → UI.
 - [ ] **P0** Integrar botonera, cámara, impresión 3D y aplicación.
 - [ ] **P0** Documentar qué funciona realmente y qué sigue planeado.
