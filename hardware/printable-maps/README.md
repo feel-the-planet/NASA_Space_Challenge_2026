@@ -13,6 +13,7 @@ The map is designed to be explored using computer vision. A camera positioned ab
 ## Files
 
 The `stl/` folder contains the 3D-printable model files. Download the required files and open them in a compatible slicer.
+![](images/model.png)
 
 ## Printing Information
 
