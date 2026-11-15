@@ -1,0 +1,8 @@
+# Feel the Planet! - Python dependencies
+opencv-python      # camera capture and image processing
+numpy              # numerical processing
+mediapipe          # index fingertip detection (Hand Landmarker)
+pygame             # real-time audio (sonification and voice playback)
+edge-tts           # neural text-to-speech voices (needs internet the first time)
+pyttsx3            # offline fallback voice (Windows SAPI)
+pillow             # sharp interface text

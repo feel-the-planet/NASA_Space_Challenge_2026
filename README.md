@@ -1,160 +1,171 @@
-![](images/portada.png)
+![Feel the Planet!](images/portada.png)
 
-# Feel the Planet! 🌍
+# Feel the Planet! 🌍🔊
 
 **Touch the Earth. Hear the Science.**
+*An interactive Earth data sonification experience for everyone, designed first for blind and low-vision people.*
 
-*An interactive, open-source way to explore Earth science through touch, sight, and sound.*
+**NASA International Space Apps Challenge 2026 · Durango, Mexico**
+**Challenge:** [The Earth Information Jukebox](https://www.spaceappschallenge.org/2026/challenges/)
 
-**NASA Space Apps Challenge 2026**  
-**Challenge:** The Earth Information Jukebox
+![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)
+![OpenCV](https://img.shields.io/badge/OpenCV-computer%20vision-5C3EE8?logo=opencv&logoColor=white)
+![MediaPipe](https://img.shields.io/badge/MediaPipe-hand%20tracking-0097A7)
+![NASA GIBS](https://img.shields.io/badge/Data-NASA%20GIBS-0B3D91)
+![License: MIT](https://img.shields.io/badge/License-MIT-green)
 
-## What is Feel the Planet?
+---
 
-Feel the Planet! is an educational project that turns Earth science data into an interactive experience.
+## What it does
 
-Users point to a location on a **3D-printed relief map of Earth**. A camera above the map tracks their index finger, and a computer responds with sound. The goal is to make those sounds represent real environmental data from NASA, helping people explore how conditions vary around the world.
+You **touch a 3D-printed relief map of the Earth**. A camera above the map tracks your index finger, and the computer **turns real NASA data at that spot into sound**:
 
-Imagine pointing to two different places on Earth and **hearing the difference** between their environmental conditions.
+- 🎺 **A continuous instrument** plays the value under your finger. Low values sound low-pitched, high values sound high-pitched, and the pitch glides smoothly as you move.
+- 🗣️ **A voice** tells you where you are (for example, *"North America"* or *"Gulf of Mexico"*) without interrupting the music.
+- 🖥️ **A screen** shows the place, the variable, the measured value, the NASA color legend and the data source.
 
-## Why are we building it?
+| Key | Variable | NASA source | Instrument | Low pitch → high pitch |
+|---|---|---|---|---|
+| `1` | CO₂ (mid-troposphere) | AIRS, Aqua satellite | Organ | less CO₂ → more CO₂ |
+| `2` | Air temperature at 2 m | MERRA-2 (GMAO) | Trumpet | cold → hot |
+| `3` | Terrain elevation | ASTER GDEM, Terra satellite | Flute | sea level → mountains |
 
-NASA provides valuable information about our planet, but scientific maps, graphs, and datasets can be difficult to explore without specialized knowledge.
+The elevation variable matches the **3D relief you feel with your hand**: touch and hear the mountains at the same time.
 
-We want to make Earth data more approachable through a hands-on learning experience. Feel the Planet! combines **a physical map, computer vision, visual information, and data sonification** to invite people to discover science in a new way.
+![Functional block diagram](docs/images/block_diagram.png)
 
-**Data sonification** means using sound to represent information. For example, a measured value can control a sound's pitch, rhythm, or intensity. These relationships should be documented so the sounds are meaningful, not random.
+---
 
-## How does it work?
+## Why
 
-1. **Point** — The user points to a place on the 3D Earth map.
-2. **Detect** — An overhead camera detects the index finger.
-3. **Locate** — The software maps the finger position to a geographic location.
-4. **Select** — The user chooses an environmental variable using buttons or the interface.
-5. **Explore** — The application looks up the relevant scientific value and translates it into sound while displaying the information on screen.
+NASA's Earth Information Center publishes powerful visualizations of our changing planet, but they are made to be **seen**. Feel the Planet! translates them into **touch and sound**, so that people who cannot see a map can still explore it, compare places and feel the patterns in the data.
 
-```text
-3D-printed Earth map
-        |
-Overhead camera -> Finger tracking
-        |
-Geographic location + Selected variable
-        |
-NASA Earth data -> Sonification rules
-        |
-   Sound + On-screen information
-```
+---
 
-## Project status
+## Features
 
-Feel the Planet! is a **work in progress**.
+- **Real NASA data.** Global layers from [NASA GIBS](https://nasa-gibs.github.io/gibs-api-docs/) (the imagery behind [NASA Worldview](https://worldview.earthdata.nasa.gov/)). Each color is converted back into its physical value with NASA's official colormaps.
+- **Continuous sonification.** The sound never stops while you explore. It changes pitch smoothly with the data and gets quieter, but does not stop, while the voice speaks.
+- **Accessible by design.** It gives spoken place names and values, has a distinct timbre for each variable, and plays a low-to-high "sweep" so you learn the pitch direction when you change variables.
+- **Bilingual.** English by default, Spanish with the `L` key, for both the voice and the interface.
+- **Auto-calibration.** Paint 17 white dots on the physical map, press `A`, and the software finds the map corners and fine-aligns itself.
+- **Works offline after the first run.** NASA layers and voice clips are cached locally.
 
-**Already prototyped**
-- [x] A 3D relief model of Earth.
-- [x] Index-finger detection through an overhead camera.
-- [x] Sound playback that changes with the selected mode or variable.
+---
 
-**Next steps**
-- [ ] Calibrate the camera and convert finger positions into geographic coordinates.
-- [ ] Connect a documented NASA Earth dataset to the sound engine.
-- [ ] Define and explain the sound mapping for each variable.
-- [ ] Integrate physical variable-selection buttons.
-- [ ] Show the location, selected variable, measured value, units, and data source on screen.
-- [ ] Publish printable files, assembly instructions, and a reproducible software setup.
-- [ ] Test the complete experience with users.
-
-> **Important:** The current sound prototype should not be interpreted as a scientifically validated representation of NASA data until the dataset integration and sound mapping have been completed and tested.
-
-## What can people explore?
-
-The system is designed to support environmental variables such as:
-
-- **Temperature** — Explore warmer and cooler conditions.
-- **Precipitation** — Compare rainfall across regions.
-- **Vegetation** — Discover differences in plant coverage or activity.
-
-The exact variables, datasets, dates, and geographic resolution will be listed as they are implemented. Not every NASA dataset provides a value for every point or time period.
-
-We also plan to share **interchangeable 3D maps** that use different textures or relief patterns to represent environmental variables.
-
-## What do we use?
-
-| Component | Role |
-| --- | --- |
-| 3D-printed relief map | Physical exploration surface |
-| Overhead camera | Captures hand movements |
-| Python and OpenCV | Camera processing and interaction |
-| Hand-tracking software | Detects the index finger |
-| NASA Earth science data | Scientific information for sonification |
-| Audio engine | Turns data into sounds |
-| Physical buttons / controller | Selects variables (planned) |
-| Computer screen and speakers | Displays information and plays sound |
-
-Some components are still being integrated. Exact hardware models and software dependencies will be documented after testing.
-
-## Repository guide
-
-As the project grows, this repository is intended to include:
+## Repository layout
 
 ```text
-feel-the-planet/
-├── README.md              # Project overview
-├── app/                   # Python application
-│   ├── vision/            # Finger tracking and map calibration
-│   ├── data/              # NASA data loading and processing
-│   ├── audio/             # Sound generation
-│   └── interface/         # User interface
+NASA_Space_Challenge_2026/
+├── README.md                  # This file
+├── LICENSE                    # MIT (source code)
+├── CREDITS.md                 # Data, libraries and third-party assets
+├── requirements.txt           # Python dependencies
+├── app/
+│   ├── feel_the_planet.py     # Main application
+│   ├── mapa.jpg               # Reference world map (region polygons and calibration)
+│   └── README.md              # How to run the app
+├── docs/
+│   ├── architecture.md        # How the system works, step by step
+│   ├── sonification.md        # Data-to-sound rules and design decisions
+│   ├── nasa-data.md           # NASA layers, units, conversion and limitations
+│   ├── calibration.md         # White-dot auto-calibration and manual calibration
+│   ├── user-guide.md          # Keys and how to use it
+│   ├── ai-disclosure.md       # Use of AI in this project
+│   └── images/                # Diagrams and NASA layer previews
 ├── hardware/
-│   ├── 3d-models/         # Editable 3D designs
-│   ├── printable-maps/    # Files for 3D printing
-│   ├── button-panel/      # Button enclosure and layout
-│   └── assembly-guide/    # Build instructions
-├── firmware/              # Code for physical controls
-├── datasets/              # Metadata and sample data
-├── docs/                  # Installation and educational guides
-├── tests/                 # Validation and tests
-└── demo/                  # Photos and demonstration video
+│   └── printable-maps/        # STL files of the 3D relief map
+├── datasets/                  # How the NASA data is obtained (no data files in Git)
+└── demo/                      # Photos and demo video
 ```
 
-*This is the planned structure. Some folders may not exist yet.*
+---
 
-## Build your own (coming soon)
+## Quick start
 
-We want students, teachers, makers, and researchers to be able to recreate Feel the Planet! using commonly available tools.
+**You need:** Windows 10/11 (also works on Linux and macOS without the Windows voice), Python 3.10+, a webcam or a phone used as a camera, and speakers.
 
-The full build guide will explain:
+```bash
+git clone https://github.com/feel-the-planet/NASA_Space_Challenge_2026.git
+cd NASA_Space_Challenge_2026
+pip install -r requirements.txt
+cd app
+python feel_the_planet.py
+```
 
-1. How to download and print the Earth map.
-2. How to position and calibrate the overhead camera.
-3. How to assemble and connect the selection buttons.
-4. How to install the Python application and its dependencies.
-5. How to download or load the supported NASA datasets.
-6. How to start the software, test the interaction, and troubleshoot common issues.
+On the first run (internet required), the app downloads automatically:
+- the MediaPipe hand model (`hand_landmarker.task`)
+- the NASA GIBS layers and their colormaps (to `app/datos_nasa/`)
+- the neural voice clips (to `app/voz/`)
 
-**Installation commands will be added once the software and dependency versions have been verified.**
+After that it works offline.
 
-## Open science and accessibility
+**Camera:** set `CAMARA` at the top of `feel_the_planet.py`: `0` = laptop camera, `1` or `2` = USB webcam or phone (DroidCam), or a URL such as `"http://192.168.1.50:8080/video"` (IP Webcam app).
 
-Our long-term goal is to make Feel the Planet! a reusable **open-source educational resource**. We plan to share code, 3D models, assembly documentation, and learning activities.
+Then calibrate once (see [docs/calibration.md](docs/calibration.md)) and touch the map.
 
-We are exploring ways to improve accessibility, including clear on-screen labels, explanations of sounds, and different ways to interact with the system. Accessibility features will be documented as they become available and are tested.
+| Key | Action |
+|---|---|
+| `1` `2` `3` | CO₂ / Temperature / Elevation |
+| `i` | Say the place and the value |
+| `s` | Mute / unmute |
+| `v` | View: camera / NASA data / blend |
+| `L` | English ⇄ Spanish |
+| `A` | Auto-calibrate with the white dots |
+| `c` | Manual calibration |
+| `t` | Rotate camera 90° |
+| `q` / `Esc` | Quit |
 
-## Scientific transparency
+---
 
-We will identify the NASA dataset used for each variable, including its source, units, time period, and spatial resolution. We will also explain how numerical values are mapped to audio parameters.
+## NASA data used
 
-This project is for **science education and exploration**. It is not a forecasting tool, and it should not be used to make safety-critical or scientific decisions without consulting the original datasets and their limitations.
+| Variable | GIBS layer | Date | Units | Resolution used |
+|---|---|---|---|---|
+| CO₂ | `AIRS_L3_Carbon_Dioxide_IR_Monthly` | 2017-02 (monthly mean) | ppm | 0.5° |
+| Temperature | `MERRA2_2m_Air_Temperature_Monthly` | 2026-08 (monthly mean) | K → °C | 0.5° |
+| Elevation | `ASTER_GDEM_Color_Index` | static | m | 0.5° |
 
-## Contributing
+<p align="center">
+  <img src="docs/images/nasa_layer_temperature_merra2.png" width="48%">
+  <img src="docs/images/nasa_layer_co2_airs.png" width="48%">
+</p>
 
-Ideas, bug reports, documentation improvements, 3D design contributions, and educational activities are welcome. As the repository develops, we will add contribution guidelines and a process for reporting issues.
+Details, conversion method and limitations: **[docs/nasa-data.md](docs/nasa-data.md)**.
+
+> **Scientific note:** values are reconstructed from GIBS imagery and its official colormaps. They are approximations meant for education and exploration, not for scientific or safety-critical decisions.
+
+---
+
+## Hardware
+
+- 3D-printed relief map of the Earth, 48 × 29 cm, printed in 4 tiles: [hardware/printable-maps](hardware/printable-maps)
+- An overhead camera on a fixed mount (webcam, or a phone over USB/Wi-Fi)
+- A computer with speakers or headphones
+
+---
+
+## Team
+
+**Feel the Planet!** — NASA Space Apps Challenge 2026, Durango.
+
+| Name | Role |
+|---|---|
+| _Team member_ | _Role_ |
+| _Team member_ | _Role_ |
+
+---
+
+## Use of AI
+
+AI tools were used during development. See **[docs/ai-disclosure.md](docs/ai-disclosure.md)** for details.
+
+---
 
 ## License and credits
 
-The team intends to release its original work openly. **License details for the software and 3D designs will be published after review.** Please check the repository's license files before reusing materials.
+Source code: **MIT License** ([LICENSE](LICENSE)). NASA data, libraries and third-party assets keep their own terms: see **[CREDITS.md](CREDITS.md)**.
 
-Created for **NASA Space Apps Challenge 2026** — *The Earth Information Jukebox*.
-
-This is an independent team project and is **not an official NASA product**. NASA datasets and third-party assets remain subject to their respective terms and attribution requirements.
+This is an independent team project and **not an official NASA product**. NASA does not endorse this project. No NASA logos or insignia are used.
 
 **Feel the Planet! — Touch the Earth. Hear the Science.**
