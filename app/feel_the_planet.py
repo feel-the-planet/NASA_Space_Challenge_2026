@@ -1,17 +1,16 @@
 """
-EARTH JUKEBOX - Mapa tactil inclusivo (version 2.3.6)
+EARTH JUKEBOX - Mapa tactil inclusivo (version 2.3.8)
 Detecta el dedo indice sobre el mapa fisico impreso en 3D, DICE EN VOZ ALTA el
 lugar que se toca y SONIFICA datos reales de la NASA en ese punto.
 
-Novedades 2.3.6
-  - AUTOCALIBRACION con puntos blancos: pinta un punto blanco (5-8 mm) sobre el
-    mapa fisico en cada lugar de PUNTOS_REF (17 lugares, ver guia_puntos_blancos.png). Con
-    la tecla A el programa encuentra los puntos, reconoce cual es cual, calcula
-    las 4 esquinas solo y usa cada punto como ajuste fino. Se guarda solo.
-    Si no hay calibracion guardada, lo intenta solo al arrancar.
-    En modo calibracion (c) se ven los puntos blancos detectados (circulos rosas).
-  - 5 puntos finos nuevos: Los Angeles, Lima (Peru), norte de Groenlandia,
-    Cabo Norte (Noruega, norte de Europa) y Cabo Chelyuskin (norte de Asia).
+Novedades 2.3.8 (basada en la 2.3.5)
+  - 17 puntos de ajuste fino (nuevos: Los Angeles, Tres Fronteras
+    Peru-Colombia-Brasil, norte de Groenlandia, Cabo Norte y Cabo Chelyuskin).
+    Ver guia_puntos_calibracion.png.
+  - Al calibrar ya no se dibuja el mapa guia encima de la camara: solo se ven
+    las esquinas y los puntos (la guia se sigue usando por dentro; tecla m la muestra).
+  - El mapa pequeno con el punto a marcar va en un margen a la derecha, fuera de
+    la imagen de la camara (ya no tapa Oceania al calibrar).
 
 Novedades 2.3.5
   - IDIOMA: el principal es el INGLES (voz e interfaz). Con la tecla L se cambia
@@ -77,7 +76,6 @@ Teclas (modo uso):
    c = calibrar                   q / ESC = salir
    L = cambiar idioma (English / Espanol)
    t = rotar camara 90 grados (despues recalibra con c)
-   a = AUTOCALIBRAR con los puntos blancos (en cualquier modo)
   En calibracion: r = reiniciar, m = ver/ocultar guia, 1-4 = elegir esquina,
                   i/j/k/l = mover esquina 1 pixel, ENTER = guardar
                   p = ajuste fino por puntos (clic o ESPACIO = marcar,
@@ -1096,7 +1094,7 @@ PUNTOS_REF = [
     ('Cabo York (norte de Australia)',     (1287, 548)),
     ('Esquina suroeste de Australia',      (1152, 669)),
     ('Los Angeles',                        (226, 312)),
-    ('Lima (Peru)',                        (369, 546)),
+    ('Tres Fronteras (Peru-Colombia-Brasil)', (396, 508)),
     ('Norte de Groenlandia',               (625, 83)),
     ('Cabo Norte (Noruega)',               (793, 115)),
     ('Cabo Chelyuskin (norte de Asia)',    (990, 92)),
@@ -1110,7 +1108,8 @@ PUNTOS_EN = {
     'Punta sur de la India': 'Southern tip of India', 'Punta sur de Kamchatka': 'Southern tip of Kamchatka',
     'Cabo York (norte de Australia)': 'Cape York (northern Australia)',
     'Esquina suroeste de Australia': 'Southwest corner of Australia',
-    'Los Angeles': 'Los Angeles', 'Lima (Peru)': 'Lima (Peru)',
+    'Los Angeles': 'Los Angeles',
+    'Tres Fronteras (Peru-Colombia-Brasil)': 'Tri-border Peru-Colombia-Brazil',
     'Norte de Groenlandia': 'Northern Greenland',
     'Cabo Norte (Noruega)': 'North Cape (Norway)',
     'Cabo Chelyuskin (norte de Asia)': 'Cape Chelyuskin (northern Asia)',
@@ -1314,218 +1313,6 @@ class Calibracion:
             self._calcular()
 
 
-
-# ----------------------------------------------------------------------------
-# AUTOCALIBRACION CON PUNTOS BLANCOS
-# En el mapa fisico se pinta un punto blanco en cada lugar de PUNTOS_REF.
-# El programa los busca en la imagen, reconoce cual es cual comparando con
-# donde deberian estar, calcula las 4 esquinas del mapa y usa cada punto
-# encontrado como punto de ajuste fino (igual que marcarlos a mano).
-# ----------------------------------------------------------------------------
-AUTO_AL_INICIO = True      # sin calibracion guardada: intenta autocalibrar sola al arrancar
-PUNTO_UMBRAL = 45          # cuanto mas brillante que su alrededor debe ser un punto (sube si detecta basura)
-PUNTO_BRILLO_MIN = 150     # brillo minimo del punto (0-255)
-PUNTO_AREA = (6, 900)      # area del punto en pixeles (imagen de 1280x720)
-PUNTO_REDONDEZ = 0.45      # 1 = circulo perfecto
-AUTO_MIN_PUNTOS = 6        # minimo de puntos reconocidos para aceptar la autocalibracion
-
-
-def detectar_puntos_blancos(frame):
-    """Centros (x, y) de manchas blancas pequenas y redondas en la imagen."""
-    gris = cv2.GaussianBlur(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY), (3, 3), 0)
-    k = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (41, 41))
-    sombrero = cv2.morphologyEx(gris, cv2.MORPH_TOPHAT, k)      # brillo respecto a su alrededor
-    mask = ((sombrero > PUNTO_UMBRAL) & (gris > PUNTO_BRILLO_MIN)).astype(np.uint8) * 255
-    cnts, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    pts = []
-    for c in cnts:
-        a = cv2.contourArea(c)
-        if not (PUNTO_AREA[0] <= max(a, len(c)) <= PUNTO_AREA[1]):
-            continue
-        per = cv2.arcLength(c, True)
-        if a >= 30 and (per <= 0 or 4 * np.pi * a / per ** 2 < PUNTO_REDONDEZ):
-            continue
-        m = cv2.moments(c)
-        if m['m00'] > 0:
-            pts.append((m['m10'] / m['m00'], m['m01'] / m['m00']))
-        else:
-            pts.append(tuple(c.reshape(-1, 2).mean(0)))
-    return np.array(pts, np.float32).reshape(-1, 2)
-
-
-def _ordenar_esquinas(q):
-    """4 puntos -> orden sup-izq, sup-der, inf-der, inf-izq."""
-    q = np.float32(q).reshape(4, 2)
-    s, d = q.sum(1), q[:, 1] - q[:, 0]
-    return np.float32([q[s.argmin()], q[d.argmin()], q[s.argmax()], q[d.argmax()]])
-
-
-def detectar_rectangulo_mapa(frame):
-    """Contorno del mapa fisico (el cuadrilatero grande de la imagen) o None."""
-    gris = cv2.GaussianBlur(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY), (5, 5), 0)
-    bordes = cv2.dilate(cv2.Canny(gris, 40, 120), np.ones((3, 3), np.uint8))
-    cnts, _ = cv2.findContours(bordes, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    area_img = frame.shape[0] * frame.shape[1]
-    for c in sorted(cnts, key=cv2.contourArea, reverse=True)[:5]:
-        a = cv2.contourArea(c)
-        if not (0.15 * area_img < a < 0.98 * area_img):
-            continue
-        aprox = cv2.approxPolyDP(c, 0.02 * cv2.arcLength(c, True), True)
-        if len(aprox) == 4 and cv2.isContourConvex(aprox):
-            return _ordenar_esquinas(aprox)
-        return _ordenar_esquinas(cv2.boxPoints(cv2.minAreaRect(c)))
-    return None
-
-
-def plantilla_puntos(calib):
-    """Donde deberia estar cada punto blanco en el mapa enderezado (P).
-    Usa los puntos de la ultima calibracion; los que falten se estiman."""
-    nombres = [nm for nm, _ in PUNTOS_REF]
-    guard = {nm: calib.puntos[nm] for nm in nombres if nm in calib.puntos}
-    if len(guard) >= 6:      # mapa.jpg -> mapa fisico, aprendido de la calibracion anterior
-        ref = dict(PUNTOS_REF)
-        f = crear_ajuste([(*ref_a_pantalla(*ref[nm]), *guard[nm]) for nm in guard])
-    else:
-        f = lambda q: q
-    out = []
-    for nm, (rx, ry) in PUNTOS_REF:
-        if nm in guard:
-            out.append(guard[nm])
-        else:
-            out.append(f(np.array([ref_a_pantalla(rx, ry)], np.float64))[0])
-    return nombres, np.array(out, np.float32)
-
-
-def _emparejar(H, cam, plant, radio):
-    """Empareja cada punto esperado (plantilla P llevada a la camara) con el
-    punto blanco detectado mas cercano. Devuelve [(i_plantilla, j_camara)]."""
-    esp = cv2.perspectiveTransform(plant.reshape(-1, 1, 2), np.linalg.inv(H)).reshape(-1, 2)
-    if not np.all(np.isfinite(esp)):
-        return []
-    d = np.linalg.norm(esp[:, None] - cam[None], axis=2)
-    pares, usado_i, usado_j = [], set(), set()
-    for k in np.argsort(d, axis=None):
-        i, j = np.unravel_index(k, d.shape)
-        if d[i, j] > radio:
-            break
-        if i in usado_i or j in usado_j:
-            continue
-        pares.append((int(i), int(j)))
-        usado_i.add(i)
-        usado_j.add(j)
-    return pares
-
-
-def autocalibrar(calib, frame):
-    """Calibra solo con los puntos blancos. Devuelve (ok, reconocidos, detectados)."""
-    cam = detectar_puntos_blancos(frame)
-    nombres, plant = plantilla_puntos(calib)
-    if len(cam) < AUTO_MIN_PUNTOS:
-        print(f'Autocalibracion: solo encontre {len(cam)} puntos blancos')
-        return False, 0, len(cam)
-    # hipotesis iniciales de donde esta el mapa en la camara
-    cands = []
-    if calib.lista:
-        cands.append(calib.H.copy())                          # la calibracion anterior
-    rect = detectar_rectangulo_mapa(frame)
-    if rect is not None:                                     # el contorno del mapa (4 giros)
-        for r in range(4):
-            cands.append(cv2.getPerspectiveTransform(np.roll(rect, -r, 0), DESTINO))
-    if len(cam) >= 4:                                        # la nube de puntos (4 giros)
-        bc = _ordenar_esquinas(cv2.boxPoints(cv2.minAreaRect(cam)))
-        bp = _ordenar_esquinas(cv2.boxPoints(cv2.minAreaRect(plant)))
-        for r in range(4):
-            cands.append(cv2.getPerspectiveTransform(np.roll(bc, -r, 0), bp))
-        # barrido de giros cada 15 grados alineando centro y tamano de las nubes
-        cc, cp = np.median(cam, 0), np.median(plant, 0)
-        esc = (np.median(np.linalg.norm(plant - cp, axis=1)) /
-               max(np.median(np.linalg.norm(cam - cc, axis=1)), 1e-6))
-        for ang in range(0, 360, 15):
-            t = np.deg2rad(ang)
-            R = esc * np.array([[np.cos(t), -np.sin(t)], [np.sin(t), np.cos(t)]])
-            Hs = np.eye(3)
-            Hs[:2, :2], Hs[:2, 2] = R, cp - R @ cc
-            cands.append(Hs)
-    diag = float(np.hypot(ANCHO, ALTO))
-    tol = 0.015 * ANCHO                     # error maximo de un punto bien reconocido (en P)
-    mejor = None
-    for H in cands:
-        try:
-            # se afina por etapas: giro+escala -> afin -> perspectiva (evita "inventar" ajustes)
-            for radio, modo in ((0.09, 'sim'), (0.06, 'sim'), (0.045, 'afin'), (0.03, 'homo'), (0.03, 'homo')):
-                pares = _emparejar(H, cam, plant, radio * diag)
-                if len(pares) < 4:
-                    break
-                src = cam[[j for _, j in pares]]
-                dst = plant[[i for i, _ in pares]]
-                if modo == 'homo':
-                    Hn, _ = cv2.findHomography(src, dst, cv2.RANSAC, 0.02 * ANCHO)
-                else:
-                    f = cv2.estimateAffinePartial2D if modo == 'sim' else cv2.estimateAffine2D
-                    M, _ = f(src, dst, method=cv2.RANSAC, ransacReprojThreshold=0.03 * ANCHO)
-                    Hn = None if M is None else np.vstack([M, [0, 0, 1]])
-                if Hn is None:
-                    break
-                H = Hn
-            pares = _emparejar(H, cam, plant, 0.03 * diag)
-        except (np.linalg.LinAlgError, cv2.error):
-            continue
-        if len(pares) < 4:
-            continue
-        src = cam[[j for _, j in pares]].reshape(-1, 1, 2)
-        res = np.linalg.norm(cv2.perspectiveTransform(src, H).reshape(-1, 2) -
-                             plant[[i for i, _ in pares]], axis=1)
-        pares = [pq for pq, r in zip(pares, res) if r < tol]       # solo los que encajan bien
-        if not pares:
-            continue
-        clave = (len(pares), -float(res[res < tol].mean()))
-        if mejor is None or clave > mejor[0]:
-            mejor = (clave, H, pares)
-    if mejor is None or len(mejor[2]) < AUTO_MIN_PUNTOS:
-        n = 0 if mejor is None else len(mejor[2])
-        print(f'Autocalibracion: {len(cam)} puntos blancos, pero solo reconoci {n}')
-        return False, n, len(cam)
-    # homografia final solo con los puntos bien reconocidos
-    _, H, pares = mejor
-    for _ in range(3):                      # repasar: recuperar puntos que quedaron fuera
-        Hf, _ = cv2.findHomography(cam[[j for _, j in pares]], plant[[i for i, _ in pares]], 0)
-        if Hf is None:
-            break
-        H = Hf
-        p2 = _emparejar(H, cam, plant, 0.03 * diag)
-        if p2:
-            src = cam[[j for _, j in p2]].reshape(-1, 1, 2)
-            res = np.linalg.norm(cv2.perspectiveTransform(src, H).reshape(-1, 2) -
-                                 plant[[i for i, _ in p2]], axis=1)
-            p2 = [pq for pq, r in zip(p2, res) if r < tol]
-        if len(p2) <= len(pares):
-            break
-        pares = p2
-    mejor = (mejor[0], H, pares)
-    _, H, pares = mejor
-    esq = cv2.perspectiveTransform(DESTINO.reshape(-1, 1, 2), np.linalg.inv(H)).reshape(-1, 2)
-    calib.esq = [[float(x), float(y)] for x, y in esq]
-    calib.sel = 0
-    calib._calcular()
-    calib.puntos = {}
-    for i, j in pares:
-        q = cv2.perspectiveTransform(cam[j].reshape(1, 1, 2), calib.H)[0, 0]
-        calib.puntos[nombres[i]] = [float(q[0]), float(q[1])]
-    calib._ajustar()
-    calib.guardar()
-    faltan = [nm for nm in nombres if nm not in calib.puntos]
-    print(f'Autocalibracion lista: {len(pares)} de {len(nombres)} puntos'
-          + (f' (faltaron: {", ".join(faltan)})' if faltan else ''))
-    return True, len(pares), len(cam)
-
-
-def dibujar_puntos_detectados(vis, frame):
-    pts = detectar_puntos_blancos(frame)
-    for x, y in pts:
-        cv2.circle(vis, (int(x), int(y)), 11, (255, 0, 255), 2, cv2.LINE_AA)
-    return len(pts)
-
-
 def dibujar_calibracion(frame, calib, mapa_guia, ver_guia, mini):
     vis = frame.copy()
     # Mapa virtual "proyectado" sobre la camara para comprobar que coincide
@@ -1557,15 +1344,6 @@ def dibujar_calibracion(frame, calib, mapa_guia, ver_guia, mini):
         o = calib.objetivo_en_camara()
         if o is not None:
             cv2.drawMarker(vis, o, (0, 255, 255), cv2.MARKER_CROSS, 30, 2, cv2.LINE_AA)
-        # miniatura de mapa.jpg con el punto que se pide
-        mh, mw = mini.shape[:2]
-        m = mini.copy()
-        rx, ry = PUNTOS_REF[calib.k][1]
-        cv2.circle(m, (int(rx * mw / REF_W), int(ry * mh / REF_H)), 6, (0, 0, 255), -1, cv2.LINE_AA)
-        cv2.circle(m, (int(rx * mw / REF_W), int(ry * mh / REF_H)), 10, (0, 0, 0), 2, cv2.LINE_AA)
-        x0, y0 = ANCHO - mw - 15, ALTO - mh - 15
-        vis[y0:y0+mh, x0:x0+mw] = m
-        cv2.rectangle(vis, (x0, y0), (x0+mw, y0+mh), (255, 255, 255), 2)
         nm = PUNTOS_REF[calib.k][0]
         nmt = tr_dic(nm, PUNTOS_EN)
         hecho = T(' (ya marcado)', ' (already marked)') if nm in calib.puntos else ''
@@ -1581,22 +1359,45 @@ def dibujar_calibracion(frame, calib, mapa_guia, ver_guia, mini):
                     f'CALIBRATION: click the {nombre_esq(len(pts))} corner of the map'),
                   T('(orden: sup-izq, sup-der, inf-der, inf-izq; arriba = Polo Norte)',
                     '(order: top-left, top-right, bottom-right, bottom-left; top = North Pole)'),
-                  T('a = AUTOCALIBRAR con los puntos blancos    r = reiniciar    q / ESC = salir',
-                    'a = AUTO-CALIBRATE with the white dots    r = restart    q / ESC = quit')]
+                  T('r = reiniciar    q / ESC = salir', 'r = restart    q / ESC = quit')]
     else:
-        lineas = [T('CALIBRACION: arrastra las esquinas hasta que el mapa guia coincida con el impreso',
-                    'CALIBRATION: drag the corners until the guide map matches the printed one'),
+        lineas = [T('CALIBRACION: arrastra las esquinas a las orillas del mapa impreso',
+                    'CALIBRATION: drag the corners to the edges of the printed map'),
                   T('1-4 = elegir esquina   i/j/k/l = mover 1 px   m = ver/ocultar guia   r = reiniciar',
                     '1-4 = pick corner   i/j/k/l = move 1 px   m = show/hide guide   r = restart'),
-                  T('p = AJUSTE FINO por puntos   a = AUTOCALIBRAR   ENTER = guardar y usar   q/ESC = salir',
-                    'p = FINE ADJUST by points   a = AUTO-CALIBRATE   ENTER = save and use   q/ESC = quit')]
+                  T('p = AJUSTE FINO por puntos (si la guia no coincide)   ENTER = guardar y usar   q/ESC = salir',
+                    'p = FINE ADJUST by points (if the guide does not match)   ENTER = save and use   q/ESC = quit')]
     y0 = 0
     ov = vis.copy()
     cv2.rectangle(ov, (0, 0), (ANCHO, 30 * len(lineas) + 20), (0, 0, 0), -1)
     vis = cv2.addWeighted(ov, 0.65, vis, 0.35, 0)
     for k, t in enumerate(lineas):
         texto(vis, t, (20, y0 + 26 + 30 * k), 0.6, (255, 255, 255), 1)
-    return vis
+
+    # margen derecho (fuera de la camara) con el mapa pequeno del punto a marcar
+    lienzo = np.full((ALTO, ANCHO + MARGEN_CALIB, 3), FONDO, np.uint8)
+    lienzo[:, :ANCHO] = vis
+    mw = MARGEN_CALIB - 30
+    mh = int(round(mw * REF_H / REF_W))
+    m = cv2.resize(mini, (mw, mh), interpolation=cv2.INTER_AREA)
+    x0, y0 = ANCHO + 15, 140
+    if puntos_on:
+        rx, ry = PUNTOS_REF[calib.k][1]
+        q = (int(rx * mw / REF_W), int(ry * mh / REF_H))
+        cv2.circle(m, q, 6, (0, 0, 255), -1, cv2.LINE_AA)
+        cv2.circle(m, q, 10, (0, 0, 0), 2, cv2.LINE_AA)
+        texto(lienzo, T('PUNTO A MARCAR', 'POINT TO MARK'), (x0, y0 - 15), 0.6, GRIS, 1)
+        nm = PUNTOS_REF[calib.k][0]
+        texto_ajustado(lienzo, f'{calib.k + 1}. {tr_dic(nm, PUNTOS_EN)}', (x0, y0 + mh + 35),
+                       mw, 0.65, (0, 165, 255), 2, 28)
+    else:
+        texto(lienzo, T('MAPA DE REFERENCIA', 'REFERENCE MAP'), (x0, y0 - 15), 0.6, GRIS, 1)
+    lienzo[y0:y0 + mh, x0:x0 + mw] = m
+    cv2.rectangle(lienzo, (x0 - 1, y0 - 1), (x0 + mw, y0 + mh), (255, 255, 255), 2)
+    return lienzo
+
+
+MARGEN_CALIB = 340    # ancho del margen derecho en la pantalla de calibracion
 
 # ----------------------------------------------------------------------------
 # INTERFAZ: lienzo con margen, mapa centrado y la informacion en los margenes
@@ -1784,9 +1585,9 @@ def dibujar_margenes(lienzo, var, datos, son, voz, region, valor, vista, en_mapa
     texto(lienzo, nombre_mostrar(region), (CANVAS_W // 2, MAP_Y + MAP_H + 70), 1.4, BLANCO, 3, centro=True)
     vista_t = tr_dic(vista, VISTA_EN)
     texto(lienzo, T(f'1 CO2   2 Temperatura   3 Altitud   i = decir valor   s = silencio   v = vista ({vista_t})   '
-                    f'g = globo   d = regiones   t = rotar   c = calibrar   a = autocalibrar   L = English   q = salir',
+                    f'g = globo   d = regiones   t = rotar   c = calibrar   L = English   q = salir',
                     f'1 CO2   2 Temperature   3 Elevation   i = say value   s = mute   v = view ({vista_t})   '
-                    f'g = globe   d = regions   t = rotate   c = calibrate   a = auto-cal   L = Espanol   q = quit'),
+                    f'g = globe   d = regions   t = rotate   c = calibrate   L = Espanol   q = quit'),
           (CANVAS_W // 2, CANVAS_H - 25), 0.55, GRIS, 1, centro=True)
 
 
@@ -1974,26 +1775,15 @@ def main():
     cv2.setWindowProperty(win, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 
     estado = {'calibrando': not calib.lista}
-    t_auto = 0.0
-
-    def hacer_autocalibracion(frame, avisar=True):
-        ok, n, total = autocalibrar(calib, frame)
-        if ok:
-            estado['calibrando'] = False
-            calib.modo_puntos = False
-            voz.decir(T(f'Calibración automática lista. {n} de {len(PUNTOS_REF)} puntos',
-                        f'Auto calibration done. {n} of {len(PUNTOS_REF)} points'))
-        elif avisar:
-            voz.decir(T(f'No pude autocalibrar. Encontré {total} puntos blancos',
-                        f'Auto calibration failed. I found {total} white dots'))
-        return ok
     def raton(ev, x, y, flags, param):
         if estado['calibrando']:
+            if ev == cv2.EVENT_LBUTTONDOWN and x >= ANCHO:
+                return
             calib.raton(ev, x, y)
     cv2.setMouseCallback(win, raton)
 
     ver_colores = False
-    ver_guia = True
+    ver_guia = False
     vista = 0
     ver_ajuste = ver_datos = -1
     voz.decir(T('Mapa táctil listo. Variable: ', 'Tactile map ready. Variable: ') + vt(VARIABLES[son.var], 'voz'))
@@ -2033,9 +1823,6 @@ def main():
 
         # 1) dedo en la camara -> 2) punto en el mapa -> 3) lugar y dato NASA
         puntas = detector.puntas(frame)
-        if AUTO_AL_INICIO and not calib.lista and not puntas and time.time() - t_auto > 1.5:
-            t_auto = time.time()
-            hacer_autocalibracion(frame, avisar=False)
         en_mapa = None
         for (px, py) in puntas:
             en_mapa = calib.a_mapa(px, py)
@@ -2063,9 +1850,6 @@ def main():
         # ------------------------- MODO CALIBRACION -------------------------
         if estado['calibrando']:
             vis = dibujar_calibracion(frame, calib, guia_P, ver_guia, mini)
-            n_bl = dibujar_puntos_detectados(vis, frame)
-            texto(vis, T(f'Puntos blancos detectados: {n_bl}', f'White dots detected: {n_bl}'),
-                  (20, ALTO - 60), 0.6, (255, 0, 255), 2)
             for (px, py) in puntas:
                 cv2.circle(vis, (px, py), 10, (0, 0, 255), -1)
                 cv2.circle(vis, (px, py), 16, (255, 255, 255), 2)
@@ -2103,9 +1887,6 @@ def main():
         if t in (ord('q'), 27): break
         if t == ord('c'):
             estado['calibrando'] = not estado['calibrando'] or not calib.lista
-            continue
-        if t in (ord('a'), ord('A')):
-            hacer_autocalibracion(frame)
             continue
         if estado['calibrando']:
             if t == ord('p') and calib.lista:

@@ -18,8 +18,7 @@
 | `g` | Globe follows the finger |
 | `d` | Show region outlines (debug) |
 | `L` | Language: English ⇄ Spanish |
-| `A` | Auto-calibrate (white dots) |
-| `c` | Manual calibration |
+| `c` | Calibration (4 corners + 17 points) |
 | `t` | Rotate camera 90° (recalibrate afterwards) |
 | `q` / `Esc` | Quit |
 

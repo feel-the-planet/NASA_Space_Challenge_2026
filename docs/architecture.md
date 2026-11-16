@@ -8,7 +8,7 @@ Everything runs in a single Python process (`app/feel_the_planet.py`). Each came
 |---|---|---|---|
 | 1 | **Capture** | The camera is opened with MSMF / DirectShow (or as an IP stream). A background thread always delivers the newest frame, so there is no lag. The image is rotated to landscape and fitted to 1280 × 720. | `class Camara`, `acomodar_horizontal()` |
 | 2 | **Fingertip detection** | MediaPipe Hand Landmarker finds the index fingertip (landmark 8). | `class DetectorIndice` |
-| 3 | **Calibration** | A homography maps camera pixels onto the flat ("straightened") map using its 4 corners. A thin-plate-spline warp built from up to 17 reference points corrects the remaining distortion caused by the 3D relief and the lens. | `class Calibracion`, `crear_ajuste()`, `autocalibrar()` |
+| 3 | **Calibration** | A homography maps camera pixels onto the flat ("straightened") map using its 4 corners. A thin-plate-spline warp built from up to 17 reference points corrects the remaining distortion caused by the 3D relief and the lens. | `class Calibracion`, `crear_ajuste()` |
 | 4 | **Geolocation** | The map pixel is converted to longitude / latitude (polynomial fit over 12 known points) and to a region (continent or ocean polygons). | `ref_a_lonlat()`, `construir_etiquetas()` |
 | 5 | **NASA lookup** | The value of the selected variable is read at that lon/lat from the decoded NASA grid (3 × 3 mean, missing values ignored). | `class DatosNASA` |
 | 6 | **Normalization** | The value is scaled to 0–1 within the variable's range. | `DatosNASA.normalizar()` |

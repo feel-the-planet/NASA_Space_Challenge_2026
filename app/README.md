@@ -13,9 +13,8 @@ python feel_the_planet.py
 |---|---|---|
 | `CAMARA` | `1` | Camera: `0` laptop, `1`/`2` USB webcam or phone (DroidCam), or an IP camera URL |
 | `ROTAR` | `90` | Rotates the image (0/90/180/270) so the map is landscape. Can also be changed live with `t` |
-| `LLENAR` | `True` | The camera image fills the whole map area |
+| `LLENAR` | `True` | `True` makes the camera image fill the map area (crops the edges a little); `False` shows the whole image |
 | `IDIOMA` | `'en'` | `'en'` English or `'es'` Spanish (`L` switches live) |
-| `AUTO_AL_INICIO` | `True` | Tries auto-calibration automatically when there is no saved calibration |
 
 ## Files created at runtime (not in Git)
 
