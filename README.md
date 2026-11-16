@@ -5,7 +5,7 @@
 **Touch the Earth. Hear the Science.**
 *An interactive Earth data sonification experience for everyone, designed first for blind and low-vision people.*
 
-**NASA International Space Apps Challenge 2026 · Durango, Mexico**
+**NASA International Space Apps Challenge 2026 · Durango, Mexico** · App version **2.3.8**
 **Challenge:** [The Earth Information Jukebox](https://www.spaceappschallenge.org/2026/challenges/)
 
 ![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)
@@ -48,7 +48,7 @@ NASA's Earth Information Center publishes powerful visualizations of our changin
 - **Continuous sonification.** The sound never stops while you explore. It changes pitch smoothly with the data and gets quieter, but does not stop, while the voice speaks.
 - **Accessible by design.** It gives spoken place names and values, has a distinct timbre for each variable, and plays a low-to-high "sweep" so you learn the pitch direction when you change variables.
 - **Bilingual.** English by default, Spanish with the `L` key, for both the voice and the interface.
-- **Auto-calibration.** Paint 17 white dots on the physical map, press `A`, and the software finds the map corners and fine-aligns itself.
+- **Precise calibration.** Click the 4 corners of the map, then fine-tune with up to 17 reference points that the app asks for one by one, with a reference map shown beside the camera image.
 - **Works offline after the first run.** NASA layers and voice clips are cached locally.
 
 ---
@@ -69,12 +69,13 @@ NASA_Space_Challenge_2026/
 │   ├── architecture.md        # How the system works, step by step
 │   ├── sonification.md        # Data-to-sound rules and design decisions
 │   ├── nasa-data.md           # NASA layers, units, conversion and limitations
-│   ├── calibration.md         # White-dot auto-calibration and manual calibration
+│   ├── calibration.md         # Guided calibration (4 corners + 17 reference points)
 │   ├── user-guide.md          # Keys and how to use it
 │   ├── ai-disclosure.md       # Use of AI in this project
 │   └── images/                # Diagrams and NASA layer previews
 ├── hardware/
 │   └── printable-maps/        # STL files of the 3D relief map
+├── firmware/                  # ESP32 button panel (Bluetooth keyboard)
 ├── datasets/                  # How the NASA data is obtained (no data files in Git)
 └── demo/                      # Photos and demo video
 ```
@@ -111,8 +112,7 @@ Then calibrate once (see [docs/calibration.md](docs/calibration.md)) and touch t
 | `s` | Mute / unmute |
 | `v` | View: camera / NASA data / blend |
 | `L` | English ⇄ Spanish |
-| `A` | Auto-calibrate with the white dots |
-| `c` | Manual calibration |
+| `c` | Calibration (4 corners + 17 points) |
 | `t` | Rotate camera 90° |
 | `q` / `Esc` | Quit |
 
@@ -142,6 +142,7 @@ Details, conversion method and limitations: **[docs/nasa-data.md](docs/nasa-data
 - 3D-printed relief map of the Earth, 48 × 29 cm, printed in 4 tiles: [hardware/printable-maps](hardware/printable-maps)
 - An overhead camera on a fixed mount (webcam, or a phone over USB/Wi-Fi)
 - A computer with speakers or headphones
+- Optional **button panel**: an ESP32 acting as a Bluetooth keyboard, with 4 buttons: CO₂, temperature, elevation and language. See [firmware/](firmware/)
 
 ---
 
