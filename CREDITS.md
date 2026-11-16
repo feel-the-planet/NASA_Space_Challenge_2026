@@ -23,6 +23,7 @@ NASA does not endorse this project. No NASA logos, flags or mission insignia are
 - [edge-tts](https://github.com/rany2/edge-tts) (LGPL/GPL): neural voices (Microsoft online TTS service)
 - [pyttsx3](https://github.com/nateshmbhat/pyttsx3) (MPL 2.0): offline Windows voice
 - [Pillow](https://python-pillow.org/) (HPND)
+- [ESP32 BLE Keyboard](https://github.com/T-vK/ESP32-BLE-Keyboard) by T-vK: button panel firmware (Arduino)
 
 ## 3D relief map
 _Team: document here the source of the elevation data and the author/license of the 3D map model (see `hardware/printable-maps/README.md`)._

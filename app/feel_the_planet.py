@@ -1,85 +1,74 @@
 """
-EARTH JUKEBOX - Mapa tactil inclusivo (version 2.3.8)
-Detecta el dedo indice sobre el mapa fisico impreso en 3D, DICE EN VOZ ALTA el
-lugar que se toca y SONIFICA datos reales de la NASA en ese punto.
+EARTH JUKEBOX / Feel the Planet! - Inclusive tactile map (version 2.3.8)
+Detects the index finger on the 3D-printed physical map, SPEAKS the place being
+touched and SONIFIES real NASA data at that point.
 
-Novedades 2.3.8 (basada en la 2.3.5)
-  - 17 puntos de ajuste fino (nuevos: Los Angeles, Tres Fronteras
-    Peru-Colombia-Brasil, norte de Groenlandia, Cabo Norte y Cabo Chelyuskin).
-    Ver guia_puntos_calibracion.png.
-  - Al calibrar ya no se dibuja el mapa guia encima de la camara: solo se ven
-    las esquinas y los puntos (la guia se sigue usando por dentro; tecla m la muestra).
-  - El mapa pequeno con el punto a marcar va en un margen a la derecha, fuera de
-    la imagen de la camara (ya no tapa Oceania al calibrar).
+What's new in 2.3.8 (based on 2.3.5)
+  - 17 fine-adjustment points (new: Los Angeles, Peru-Colombia-Brazil tri-border,
+    northern Greenland, North Cape and Cape Chelyuskin). See guia_puntos_calibracion.png.
+  - During calibration the guide map is no longer drawn over the camera: only the
+    corners and points are shown (the guide is still used internally; key m shows it).
+  - The small map with the point to mark sits in a right margin, outside the camera
+    image (it no longer covers Oceania while calibrating).
 
-Novedades 2.3.5
-  - IDIOMA: el principal es el INGLES (voz e interfaz). Con la tecla L se cambia
-    a ESPANOL y otra vez a ingles en cualquier momento. Para empezar en espanol
-    pon IDIOMA = 'es' arriba en la configuracion.
-      * Voz en ingles: en-US-JennyNeural, voz en espanol: es-MX-DaliaNeural
-        (edge-tts; los audios en ingles se guardan en "voz" con prefijo en_).
-      * Sin internet usa la voz de Windows del idioma elegido (si esta instalada).
+What's new in 2.3.5
+  - LANGUAGE: English is the default (voice and interface). Key L switches to
+    Spanish and back at any time. To start in Spanish set IDIOMA = 'es' in the settings.
+      * English voice: en-US-JennyNeural, Spanish voice: es-MX-DaliaNeural
+        (edge-tts; English clips are saved in "voz" with the en_ prefix).
+      * Offline it uses the Windows voice of the selected language (if installed).
 
-Novedades 2.3.4
-  - Variable 3 ahora es la ALTITUD del terreno sobre el nivel del mar (NASA ASTER
-    GDEM), el relieve que esta impreso en 3D. Flauta: llano/costa = grave,
-    montana = agudo (0 a 4500 m). En el mar no hay dato (suena bajito).
-    La primera vez necesita internet para descargarla (queda en datos_nasa).
-  - Interfaz nitida: el programa le avisa a Windows que dibuje a la resolucion
-    real de la pantalla (sin el escalado que la hacia ver borrosa) y los textos
-    se dibujan con la fuente Segoe UI de Windows (con acentos) si hay Pillow.
-  - Carpeta limpia: todo lo necesario esta directo en esta carpeta.
+What's new in 2.3.4
+  - Variable 3 is now terrain ELEVATION above sea level (NASA ASTER GDEM), the relief
+    printed in 3D. Flute: plains/coast = low pitch, mountains = high pitch (0 to 4500 m).
+    No data over the sea (plays quietly). Needs internet the first time (saved in datos_nasa).
+  - Sharp interface: the app tells Windows to draw at the real screen resolution
+    (without the scaling that made it blurry) and text uses the Segoe UI font if Pillow is installed.
+  - Clean folder: everything needed is directly in this folder.
 
-Novedades 2.3.2
-  - Sonido CONTINUO (prioridad): mientras el dedo esta en el mapa suena una nota
-    sostenida que sube y baja en tiempo real con el dato (grave = valor bajo,
-    agudo = valor alto). La voz dice el lugar ENCIMA del sonido, que solo baja
-    un poco de volumen mientras habla, pero no se corta.
-        1 = CO2            -> organo grave       (mas CO2 = mas agudo)
-        2 = Temperatura    -> trompeta           (frio = grave, calor = agudo)
-        3 = Altitud        -> flauta con oleaje  (bajo = grave, montana = agudo)
-  - Al elegir variable suena un barrido de grave a agudo con su instrumento.
-  - Camara: se abre como en el programa de la banda (MSMF/DSHOW), imagen
-    horizontal que cubre el recuadro del mapa (ROTAR / LLENAR, tecla t).
+What's new in 2.3.2
+  - CONTINUOUS sound (priority): while the finger is on the map a sustained note rises
+    and falls in real time with the data (low pitch = low value, high pitch = high value).
+    The voice speaks the place ON TOP of the sound, which only gets a little quieter.
+        1 = CO2            -> deep organ          (more CO2 = higher pitch)
+        2 = Temperature    -> trumpet             (cold = low, hot = high)
+        3 = Elevation      -> flute with swell    (low = low pitch, mountains = high)
+  - Selecting a variable plays a low-to-high sweep with its instrument.
+  - Camera: opened with MSMF/DSHOW, landscape image that fills the map area
+    (ROTAR / LLENAR, key t).
 
-Novedades 2.1
-  - Voz: dice el nombre del continente / oceano al tocarlo.
-      * Voz neuronal "es-MX-DaliaNeural" (edge-tts, necesita internet la 1a vez;
-        los audios se guardan en la carpeta "voz" y despues funcionan sin internet).
-      * Si no hay internet ni edge-tts, usa la voz en espanol de Windows (pyttsx3).
-  - 3 variables de datos NASA (imagenes reales de NASA GIBS / Worldview):
-        1 = CO2            (AIRS, Aqua)            -> sonido grave y denso
-        2 = Temperatura    (MERRA-2, aire a 2 m)   -> sonido de campana
-        3 = Nivel del mar  (JPL MEaSUREs, anomalia) -> sonido de ola
-    Al pulsar la tecla, la voz dice la variable y suena su tono. Al tocar el
-    mapa, la ALTURA de la nota depende del valor del dato en ese punto
-    (escala pentatonica: grave = valor bajo, agudo = valor alto).
-  - Interfaz con margen: el mapa (48 x 29 cm) queda centrado y toda la
-    informacion se muestra en los margenes, sin taparlo.
+What's new in 2.1
+  - Voice: says the name of the continent / ocean when touched.
+      * Neural voice (edge-tts, needs internet the first time; clips are saved in
+        the "voz" folder and then work offline).
+      * Without internet or edge-tts, uses the Windows voice (pyttsx3).
+  - 3 NASA data variables (real NASA GIBS / Worldview imagery). Touching the map,
+    the PITCH of the note depends on the data value at that point.
+  - Interface with margins: the map (48 x 29 cm) is centered and all the
+    information is shown in the margins, without covering it.
 
-Requisitos:   pip install opencv-python numpy mediapipe pygame edge-tts pyttsx3
+Requirements:   pip install opencv-python numpy mediapipe pygame edge-tts pyttsx3 pillow
 
-PRIMER USO (calibracion, solo una vez o si mueves la camara / el mapa):
-  1. Fija la camara de modo que vea TODO el mapa (lo ideal: desde arriba).
-  2. Haz clic en las 4 esquinas del mapa en orden: sup-izq, sup-der, inf-der, inf-izq
-     ("arriba" = el lado del Polo Norte).
-  3. Aparece el mapa virtual encima como guia: arrastra las esquinas hasta que
-     los continentes coincidan con los del mapa impreso.
-  4. AJUSTE FINO (recomendado): pulsa p y marca los puntos que pide el programa
-     (clic, o punta del dedo + ESPACIO).
-  5. Pulsa ENTER para guardar.
+FIRST USE (calibration, only once or if the camera / map is moved):
+  1. Fix the camera so it sees the WHOLE map (ideally from above).
+  2. Click the 4 corners of the map in order: top-left, top-right, bottom-right, bottom-left
+     ("top" = the North Pole side).
+  3. Drag the corners to the edges of the printed map if needed.
+  4. FINE ADJUSTMENT (recommended): press p and mark the points the app asks for
+     (click, or fingertip + SPACE).
+  5. Press ENTER to save.
 
-Teclas (modo uso):
-   1 / 2 / 3 = CO2 / Temperatura / Altitud            i = decir lugar y valor
-   s = silencio (voz y tonos)     v = vista: camara / datos NASA / mezcla
-   g = globo enfoca el dedo       d = ver regiones encima (depurar)
-   c = calibrar                   q / ESC = salir
-   L = cambiar idioma (English / Espanol)
-   t = rotar camara 90 grados (despues recalibra con c)
-  En calibracion: r = reiniciar, m = ver/ocultar guia, 1-4 = elegir esquina,
-                  i/j/k/l = mover esquina 1 pixel, ENTER = guardar
-                  p = ajuste fino por puntos (clic o ESPACIO = marcar,
-                      n/b = siguiente/anterior, x = borrar punto, z = borrar todos)
+Keys (use mode):
+   1 / 2 / 3 = CO2 / Temperature / Elevation       i = say place and value
+   s = mute (voice and tones)     v = view: camera / NASA data / blend
+   g = globe follows the finger   d = show regions (debug)
+   c = calibrate                  q / ESC = quit
+   L = switch language (English / Spanish)
+   t = rotate camera 90 degrees (then recalibrate with c)
+  In calibration: r = restart, m = show/hide guide, 1-4 = select corner,
+                  i/j/k/l = move corner 1 pixel, ENTER = save
+                  p = fine adjustment by points (click or SPACE = mark,
+                      n/b = next/previous, x = delete point, z = delete all)
 """
 
 import os
@@ -90,13 +79,13 @@ import numpy as np
 import time
 import urllib.request
 
-# Pantalla nitida en Windows: sin esto, con el escalado de pantalla (125 %, 150 %)
-# Windows estira la ventana de OpenCV y los textos se ven borrosos.
+# Sharp display on Windows: without this, with display scaling (125 %, 150 %)
+# Windows stretches the OpenCV window and the text looks blurry.
 if sys.platform.startswith('win'):
     try:
         import ctypes
         try:
-            ctypes.windll.shcore.SetProcessDpiAwareness(2)      # por monitor
+            ctypes.windll.shcore.SetProcessDpiAwareness(2)      # per monitor
         except Exception:
             ctypes.windll.user32.SetProcessDPIAware()
     except Exception:
@@ -111,13 +100,13 @@ except ImportError:
 MODELO_URL = ('https://storage.googleapis.com/mediapipe-models/hand_landmarker/'
               'hand_landmarker/float16/1/hand_landmarker.task')
 
-# --- Idioma -------------------------------------------------------------------
-IDIOMA = 'en'      # 'en' = English (principal)   'es' = Espanol   (tecla L cambia)
+# --- Language -----------------------------------------------------------------
+IDIOMA = 'en'      # 'en' = English (default)   'es' = Spanish   (key L switches)
 VOCES_EDGE = {'en': 'en-US-JennyNeural', 'es': 'es-MX-DaliaNeural'}
 
 
 def T(es, en):
-    """Texto segun el idioma actual."""
+    """Text in the current language."""
     return en if IDIOMA == 'en' else es
 
 
@@ -128,12 +117,12 @@ def cambiar_idioma():
 
 
 ANCHO, ALTO = 1280, 720
-REF_W, REF_H = 1500, 844          # tamano de mapa.jpg al que corresponden los poligonos
+REF_W, REF_H = 1500, 844          # size of mapa.jpg that the polygons refer to
 
 # ----------------------------------------------------------------------------
-# REGIONES (poligonos en pixeles del mapa original 1500x844).
-# Se evalua en orden: el primero que contiene al pixel gana.
-# Para el mapa impreso en 3D solo tendras que recalibrar estos puntos.
+# REGIONS (polygons in pixels of the original 1500x844 map).
+# Evaluated in order: the first polygon that contains the pixel wins.
+# For the 3D-printed map only these points need to be recalibrated.
 # ----------------------------------------------------------------------------
 TIERRA = [
     ('Groenlandia',       [(515,70),(680,70),(680,135),(615,138),(600,195),(515,195)]),
@@ -165,11 +154,11 @@ AGUA = [
     ('Oceano Pacifico',      [(1130,100),(1500,100),(1500,844),(1130,844)]),
 ]
 
-# Datos que se muestran (puedes ajustarlos / agregar CO2, lluvia, etc.)
+# Data shown (can be adjusted / extended with CO2, rain, etc.)
 
 
 # ----------------------------------------------------------------------------
-# MAPA DE ETIQUETAS: cada pixel del mapa -> id de region (se calcula una sola vez)
+# LABEL MAP: every map pixel -> region id (computed only once)
 # ----------------------------------------------------------------------------
 def cargar_mapa():
     carpeta = os.path.dirname(os.path.abspath(__file__))
@@ -182,7 +171,7 @@ def cargar_mapa():
 
 
 def construir_etiquetas(mapa):
-    # 1) tierra vs agua a partir del color azul (se cierran las lineas blancas de fronteras)
+    # 1) land vs water from the blue color (white border lines are closed first)
     hsv = cv2.cvtColor(mapa, cv2.COLOR_BGR2HSV)
     tierra = cv2.inRange(hsv, np.array([90, 40, 40]), np.array([130, 255, 255]))
     tierra = cv2.morphologyEx(tierra, cv2.MORPH_CLOSE, np.ones((5, 5), np.uint8)) > 0
@@ -195,7 +184,7 @@ def construir_etiquetas(mapa):
     sx, sy = ANCHO / REF_W, ALTO / REF_H
     def pintar(lista):
         out = np.full((ALTO, ANCHO), -1, np.int16)
-        for nombre, pts in reversed(lista):            # al reves: el primero queda encima
+        for nombre, pts in reversed(lista):            # reversed: the first one ends up on top
             poly = np.array([(int(x*sx), int(y*sy)) for x, y in pts], np.int32)
             cv2.fillPoly(out, [poly], id_de(nombre))
         return out
@@ -208,7 +197,7 @@ def construir_etiquetas(mapa):
     return etiquetas, nombres, tierra
 
 # ----------------------------------------------------------------------------
-# DETECCION DEL DEDO INDICE
+# INDEX FINGER DETECTION
 # ----------------------------------------------------------------------------
 class DetectorIndice:
     def __init__(self):
@@ -219,12 +208,12 @@ class DetectorIndice:
         self.suave = {}
         if MP_OK:
             try:
-                if hasattr(mp, 'solutions'):                      # API clasica
+                if hasattr(mp, 'solutions'):                      # classic API
                     self.hands = mp.solutions.hands.Hands(
                         max_num_hands=2, model_complexity=0,
                         min_detection_confidence=0.6, min_tracking_confidence=0.5)
                     self.modo = 'mediapipe-solutions'
-                else:                                             # API nueva (Tasks)
+                else:                                             # new API (Tasks)
                     from mediapipe.tasks import python as mpp
                     from mediapipe.tasks.python import vision
                     ruta = os.path.join(os.path.dirname(os.path.abspath(__file__)),
@@ -242,7 +231,7 @@ class DetectorIndice:
             except Exception as e:
                 print('No se pudo iniciar MediaPipe:', e)
                 self.modo = 'color'
-        # Respaldo por color (marcador verde en el dedo / guante)
+        # color fallback (green marker on the finger / glove)
         self.low, self.high = np.array([35, 100, 100]), np.array([85, 255, 255])
 
     def _suavizar(self, i, x, y):
@@ -252,7 +241,7 @@ class DetectorIndice:
         return int(x), int(y)
 
     def puntas(self, frame):
-        """Devuelve lista de (x, y) de las puntas de dedo indice."""
+        """Returns a list of (x, y) index fingertip positions."""
         h, w = frame.shape[:2]
         res = []
         if self.modo == 'mediapipe-solutions':
@@ -270,7 +259,7 @@ class DetectorIndice:
             if not manos:
                 self.suave.clear()
             for i, lms in enumerate(manos):
-                lm = lms[8]                                       # 8 = punta del indice
+                lm = lms[8]                                       # 8 = index fingertip
                 res.append(self._suavizar(i, lm.x * w, lm.y * h))
         else:
             hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
@@ -286,26 +275,26 @@ class DetectorIndice:
         return res
 
 # ----------------------------------------------------------------------------
-# GLOBO TERRAQUEO 3D GIRATORIO (se dibuja con OpenCV, sin librerias extra)
+# ROTATING 3D GLOBE (drawn with OpenCV, no extra libraries)
 # ----------------------------------------------------------------------------
-GLOBO_CX, GLOBO_CY, GLOBO_R = 170, 840, 135     # en el margen izquierdo del lienzo
-GLOBO_VEL = 0.5                                  # velocidad de giro (rad/s)
-GLOBO_ENFOQUE = 6.0          # rapidez con la que el globo gira hacia el dedo (mas = mas rapido)
-GLOBO_ESPERA = 0.6           # segundos sin mano antes de volver a girar solo
-INCLINACION = np.radians(23.5)                   # inclinacion del eje terrestre
+GLOBO_CX, GLOBO_CY, GLOBO_R = 170, 840, 135     # in the left margin of the canvas
+GLOBO_VEL = 0.5                                  # rotation speed (rad/s)
+GLOBO_ENFOQUE = 6.0          # how fast the globe turns towards the finger (higher = faster)
+GLOBO_ESPERA = 0.6           # seconds without a hand before it spins on its own again
+INCLINACION = np.radians(23.5)                   # tilt of the Earth's axis
 
-# Calibracion mapa plano <-> longitud/latitud (en pixeles del mapa original 1500x844).
-# Si el punto del globo no coincide con el del mapa, ajusta estos 4 numeros.
-X_OESTE, X_ESTE = 20, 1388       # x donde estan -180 y +180 grados de longitud
-LAT_ARRIBA, LAT_ABAJO = 96.0, -68.0   # latitud en el borde superior e inferior del mapa
+# Flat map <-> longitude/latitude calibration (in pixels of the original 1500x844 map).
+# If the point on the globe does not match the map, adjust these 4 numbers.
+X_OESTE, X_ESTE = 20, 1388       # x where -180 and +180 degrees of longitude are
+LAT_ARRIBA, LAT_ABAJO = 96.0, -68.0   # latitude at the top and bottom edges of the map
 U0, U1 = X_OESTE / REF_W, X_ESTE / REF_W
 
 
 class Globo:
     def __init__(self, tierra, etiquetas, cx, cy, r):
         self.tex = np.zeros((ALTO, ANCHO, 3), np.uint8)
-        self.tex[:] = (120, 55, 15)                  # oceano (BGR)
-        self.tex[tierra] = (75, 165, 85)             # tierra
+        self.tex[:] = (120, 55, 15)                  # ocean (BGR)
+        self.tex[tierra] = (75, 165, 85)             # land
         self.etq, self.cx, self.cy, self.r = etiquetas, cx, cy, r
         n = 2 * r
         ys, xs = np.mgrid[0:n, 0:n]
@@ -315,16 +304,16 @@ class Globo:
         self.mask = d2 <= 1
         sz = np.sqrt(np.clip(1 - d2, 0, 1))
         self.sx, self.sy, self.sz = sx, sy, sz
-        self.shade = (0.35 + 0.65 * sz)[..., None]   # sombreado de esfera
+        self.shade = (0.35 + 0.65 * sz)[..., None]   # sphere shading
         self.theta, self.t_ant = 0.0, time.time()
-        self.seguir = True           # True = el globo se detiene y enfoca el punto senalado
-        self.incl = INCLINACION      # inclinacion actual (cambia al enfocar una latitud)
+        self.seguir = True           # True = the globe stops and focuses on the pointed location
+        self.incl = INCLINACION      # current tilt (changes when focusing on a latitude)
         self.ult_lonlat, self.t_ult = None, 0.0
         self._calcular_esfera()
 
     def _calcular_esfera(self):
         c, s = np.cos(self.incl), np.sin(self.incl)
-        wy = self.sy*c - self.sz*s                   # inclinar el eje
+        wy = self.sy*c - self.sz*s                   # tilt the axis
         wz = self.sy*s + self.sz*c
         self.lat = np.arcsin(np.clip(wy, -1, 1))
         self.lon0 = np.arctan2(self.sx, wz)
@@ -344,32 +333,32 @@ class Globo:
         lonm = latm = None
         if punto is not None:
             lonm, latm = self._punto_a_lonlat(*punto)
-        # Si la mano desaparece un instante, se mantiene el ultimo punto un momento
+        # if the hand disappears for an instant, keep the last point for a moment
         if lonm is not None:
             self.ult_lonlat, self.t_ult = (lonm, latm), ahora
         elif self.ult_lonlat is not None and ahora - self.t_ult < GLOBO_ESPERA:
             lonm, latm = self.ult_lonlat
 
-        k = 1 - np.exp(-GLOBO_ENFOQUE * dt)          # suavizado independiente de los FPS
+        k = 1 - np.exp(-GLOBO_ENFOQUE * dt)          # smoothing independent of the FPS
         if self.seguir and lonm is not None:
-            # se detiene y gira (longitud y latitud) hasta dejar el punto de frente
+            # stops and turns (longitude and latitude) until the point faces the viewer
             self.theta += self._envolver(lonm - self.theta) * k
             obj_incl = -latm
-        else:                                        # sin mano: giro continuo normal
+        else:                                        # no hand: normal continuous rotation
             self.theta = self._envolver(self.theta + GLOBO_VEL * dt)
             obj_incl = INCLINACION
         if abs(obj_incl - self.incl) > 1e-3:
             self.incl += (obj_incl - self.incl) * k
             self._calcular_esfera()
 
-        # textura -> esfera (cada pixel del globo busca su color en el mapa plano)
+        # texture -> sphere (each globe pixel looks up its color in the flat map)
         lon = self.lon0 + self.theta
         frac = (lon / (2*np.pi) + 0.5) % 1.0
         mx = ((U0 + frac * (U1 - U0)) * ANCHO).astype(np.float32)
         v = np.clip((LAT_ARRIBA - np.degrees(self.lat)) / (LAT_ARRIBA - LAT_ABAJO), 0, 1)
         my = (v * (ALTO - 1)).astype(np.float32)
         img = cv2.remap(self.tex, mx, my, cv2.INTER_LINEAR).astype(np.float32)
-        if rid is not None:                          # resaltar la region tocada
+        if rid is not None:                          # highlight the touched region
             lab = self.etq[np.clip(my.astype(int), 0, ALTO-1), np.clip(mx.astype(int), 0, ANCHO-1)]
             hl = (lab == rid)[..., None]
             img = np.where(hl, img*0.5 + 255*0.5, img)
@@ -381,13 +370,13 @@ class Globo:
         roi[self.mask] = img[self.mask]
         cv2.circle(vis, (cx, cy), r, (230, 230, 230), 2, cv2.LINE_AA)
 
-        # marcador del dedo sobre el globo
+        # finger marker on the globe
         if lonm is not None:
             lr = lonm - self.theta
             wx, wy, wz = np.cos(latm)*np.sin(lr), np.sin(latm), np.cos(latm)*np.cos(lr)
             c, s = np.cos(self.incl), np.sin(self.incl)
             sx_, sy_, sz_ = wx, wy*c + wz*s, -wy*s + wz*c
-            if sz_ > 0:                              # solo si esta del lado visible
+            if sz_ > 0:                              # only if it is on the visible side
                 px, py = int(cx + sx_*r), int(cy - sy_*r)
                 pulso = int(3 * np.sin(ahora * 6))
                 cv2.circle(vis, (px, py), 7, (0, 0, 255), -1, cv2.LINE_AA)
@@ -401,7 +390,7 @@ class Globo:
 
 
 # ----------------------------------------------------------------------------
-# CONFIGURACION GENERAL
+# GENERAL SETTINGS
 # ----------------------------------------------------------------------------
 import re
 import json
@@ -410,27 +399,27 @@ import asyncio
 import threading
 import unicodedata
 
-# --- Camara -----------------------------------------------------------------
-# CAMARA: numero = camara conectada a la PC (0 = laptop, 1/2 = DroidCam por USB / webcam)
-#         texto  = URL de la camara del telefono por Wi-Fi (ej. "http://192.168.1.50:8080/video")
+# --- Camera -----------------------------------------------------------------
+# CAMARA: number = camera connected to the PC (0 = laptop, 1/2 = DroidCam over USB / webcam)
+#         text   = URL of the phone camera over Wi-Fi (e.g. "http://192.168.1.50:8080/video")
 CAMARA = 1
-CAPTURA = (1280, 720)   # resolucion que se le PIDE a la camara; si no la acepta se usa la suya
-ROTAR = 90              # 0, 90, 180 o 270 grados (tambien con la tecla t). 90 = telefono vertical -> imagen horizontal
-LLENAR = True           # True = la camara cubre TODO el recuadro del mapa (recorta un poco las orillas)
-                        # False = se ve completa con franjas negras a los lados
-QUITAR_FRANJAS = True   # recorta las franjas negras que pone DroidCam con el telefono en vertical
-# La imagen siempre se acomoda HORIZONTAL (1280x720) sin deformarse.
-TIEMPO_ESTABLE = 0.25      # segundos que el dedo debe estar en un lugar antes de decirlo
-PERIODO_NOTA = 0.55        # cada cuanto se repite la nota del dato si el dedo no se mueve
+CAPTURA = (1280, 720)   # resolution REQUESTED from the camera; if not accepted, the camera's own is used
+ROTAR = 90              # 0, 90, 180 or 270 degrees (also key t). 90 = phone in portrait -> landscape image
+LLENAR = True           # True = the camera fills the WHOLE map area (crops the edges a little)
+                        # False = shown complete with black bars on the sides
+QUITAR_FRANJAS = True   # crops the black bars DroidCam adds when the phone is in portrait
+# The image is always fitted LANDSCAPE (1280x720) without distortion.
+TIEMPO_ESTABLE = 0.25      # seconds the finger must stay on a place before it is spoken
+PERIODO_NOTA = 0.55        # how often the data note repeats if the finger does not move
 CARPETA = os.path.dirname(os.path.abspath(__file__))
 
-# Pantalla: lienzo con margen; el mapa (48 x 29 cm) queda centrado
+# Screen: canvas with margins; the map (48 x 29 cm) is centered
 CANVAS_W, CANVAS_H = 1920, 1080
 MAPA_CM = (48.0, 29.0)
 MAP_W = 1240
 MAP_H = int(round(MAP_W * MAPA_CM[1] / MAPA_CM[0]))          # 749
-MAP_X = (CANVAS_W - MAP_W) // 2                               # margen izq/der = 340
-MAP_Y = (CANVAS_H - MAP_H) // 2                               # margen sup/inf ~ 165
+MAP_X = (CANVAS_W - MAP_W) // 2                               # left/right margin = 340
+MAP_Y = (CANVAS_H - MAP_H) // 2                               # top/bottom margin ~ 165
 
 try:
     import pygame
@@ -438,7 +427,7 @@ try:
 except ImportError:
     PG_OK = False
 
-# Nombres con acentos para la voz (en pantalla se usan sin acentos)
+# Names with accents for the voice (the screen uses them without accents)
 VOZ_PALABRAS = {
     'Norteamerica': 'Norteamérica', 'Centroamerica': 'Centroamérica',
     'Sudamerica': 'Sudamérica', 'Africa': 'África', 'Oceania': 'Oceanía',
@@ -464,7 +453,7 @@ REGION_EN = {
 
 
 def nombre_mostrar(nombre):
-    """Nombre de la region para la pantalla (los nombres internos estan en espanol)."""
+    """Region name for the screen (internal names are in Spanish)."""
     return REGION_EN.get(nombre, nombre) if IDIOMA == 'en' else nombre
 
 
@@ -479,10 +468,10 @@ def nombre_voz(nombre):
 
 
 # ----------------------------------------------------------------------------
-# GEORREFERENCIA DE mapa.jpg: pixel (1500x844) -> longitud / latitud
-# Ajuste polinomial con 12 puntos conocidos (error ~1-2 grados).
+# GEOREFERENCE OF mapa.jpg: pixel (1500x844) -> longitude / latitude
+# Polynomial fit with 12 known points (error ~1-2 degrees).
 # ----------------------------------------------------------------------------
-GEO_PUNTOS = [   # (lon, lat, x, y en mapa.jpg)
+GEO_PUNTOS = [   # (lon, lat, x, y in mapa.jpg)
     (-168.0, 65.6, 160, 165), (-80.4, 25.1, 364, 355), (-5.6, 36.0, 672, 300),
     (-34.8, -7.2, 546, 525), (-67.3, -55.98, 459, 782), (20.0, -34.8, 772, 674),
     (51.3, 11.8, 905, 428), (77.5, 8.1, 1016, 445), (156.7, 51.2, 1265, 219),
@@ -501,7 +490,7 @@ COEF_LAT = np.linalg.lstsq(_base_geo(_g[:, 2], _g[:, 3]), _g[:, 1], rcond=None)[
 
 
 def ref_a_lonlat(xr, yr):
-    """Punto(s) de mapa.jpg en pixeles ANCHO x ALTO -> (lon, lat) en grados."""
+    """Point(s) of mapa.jpg in ANCHO x ALTO pixels -> (lon, lat) in degrees."""
     b = _base_geo(np.asarray(xr) * REF_W / ANCHO, np.asarray(yr) * REF_H / ALTO)
     lon = (b @ COEF_LON + 180.0) % 360.0 - 180.0
     lat = np.clip(b @ COEF_LAT, -90.0, 90.0)
@@ -509,14 +498,14 @@ def ref_a_lonlat(xr, yr):
 
 
 # ----------------------------------------------------------------------------
-# DATOS NASA (imagenes reales de NASA GIBS, las mismas capas de NASA Worldview)
-# Se descarga la imagen global de cada variable y su tabla de colores
-# (colormap). Asi cada color de la imagen se convierte en su valor real.
-# Los archivos quedan en la carpeta "datos_nasa" (funciona sin internet).
+# NASA DATA (real NASA GIBS imagery, the same layers as NASA Worldview)
+# The global image of each variable and its color table (colormap) are
+# downloaded, so each color of the image is converted into its real value.
+# Files are kept in the "datos_nasa" folder (works offline afterwards).
 # ----------------------------------------------------------------------------
 GIBS_WMS = 'https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi'
 GIBS_CMAP = 'https://gibs.earthdata.nasa.gov/colormaps/v1.3/'
-DATA_W, DATA_H = 720, 360          # 0.5 grados por pixel
+DATA_W, DATA_H = 720, 360          # 0.5 degrees per pixel
 CARPETA_DATOS = os.path.join(CARPETA, 'datos_nasa')
 
 VARIABLES = [
@@ -540,8 +529,8 @@ VARIABLES = [
          fmt=lambda v: f'{v:.1f} C',
          decir=lambda v: f'{v:.0f} grados',
          timbre='trompeta', base=174.61, color=(40, 160, 255)),
-    # Altura del terreno sobre el nivel del mar (el relieve impreso en 3D).
-    # Capa fija (no cambia con el tiempo): sin fecha. En el mar no hay dato.
+    # Terrain height above sea level (the relief printed in 3D).
+    # Static layer (does not change over time): no date. No data over the sea.
     dict(clave='alt', tecla='3', nombre='Altitud', voz='Altura sobre el nivel del mar',
          capa='ASTER_GDEM_Color_Index', cmap='ASTER_GDEM_Color_Index',
          fecha=None, conv=lambda m: m, rango=(0.0, 4500.0), suavizar=1.2,
@@ -557,7 +546,7 @@ VARIABLES = [
 
 
 def vt(v, clave):
-    """Campo de una variable en el idioma actual (nombre, voz, fuente, decir)."""
+    """Field of a variable in the current language (name, voice, source, spoken value)."""
     return v.get(clave + '_en', v[clave]) if IDIOMA == 'en' else v[clave]
 
 
@@ -572,7 +561,7 @@ def tr_dic(texto, dic):
 
 
 def leer_colormap(ruta):
-    """Lee el XML de colores de GIBS -> (colores RGB (N,3), valores (N,))."""
+    """Reads the GIBS colormap XML -> (RGB colors (N,3), values (N,))."""
     txt = open(ruta, encoding='utf-8').read()
     cols, vals = [], []
     for m in re.finditer(r'<ColorMapEntry\s([^>]*?)/?>', txt):
@@ -605,12 +594,12 @@ class DatosNASA:
     def __init__(self):
         os.makedirs(CARPETA_DATOS, exist_ok=True)
         n = len(VARIABLES)
-        self.valores = [None] * n      # grilla (360x720) de valores ya convertidos (ppm, C, cm)
-        self.imagen = [None] * n       # imagen en colores NASA (BGR) para mostrar
+        self.valores = [None] * n      # grid (360x720) of converted values (ppm, C, m)
+        self.imagen = [None] * n       # image in NASA colors (BGR) for display
         self.rango = [None] * n
-        self.barra = [None] * n        # 256 colores NASA de bajo a alto (leyenda)
+        self.barra = [None] * n        # 256 NASA colors from low to high (legend)
         self.estado = ['cargando'] * n
-        self.version = 0               # cambia cuando una variable termina de cargar
+        self.version = 0               # changes when a variable finishes loading
         threading.Thread(target=self._cargar_todo, daemon=True).start()
 
     def _rutas(self, v):
@@ -672,7 +661,7 @@ class DatosNASA:
             lo, hi = np.percentile(valores[ok], [2, 98])
         else:
             lo, hi = v['rango']
-        # imagen para mostrar: colores oficiales NASA del valor (gris oscuro = sin dato)
+        # display image: official NASA colors of the value (dark grey = no data)
         orden = np.argsort(vals)
         vs, cs = v['conv'](vals[orden]), cols[orden]
         idx = np.clip(np.searchsorted(vs, np.where(ok, valores, vs[0])), 0, len(vs) - 1)
@@ -686,7 +675,7 @@ class DatosNASA:
         return self.valores[i] is not None
 
     def valor(self, i, lon, lat):
-        """Valor (promedio 3x3 ignorando huecos) en lon/lat, o None si no hay dato."""
+        """Value (3x3 mean ignoring gaps) at lon/lat, or None if there is no data."""
         if not self.listo(i):
             return None
         c = int(((lon + 180.0) % 360.0) * DATA_W / 360.0) % DATA_W
@@ -702,9 +691,9 @@ class DatosNASA:
 
 
 # ----------------------------------------------------------------------------
-# VOZ: dice los lugares y las variables en voz alta
+# VOICE: speaks the places and the variables
 # ----------------------------------------------------------------------------
-# Voces: ver VOCES_EDGE arriba (otras: en-US-GuyNeural, es-MX-JorgeNeural)
+# Voices: see VOCES_EDGE above (others: en-US-GuyNeural, es-MX-JorgeNeural)
 
 
 class Voz:
@@ -740,11 +729,11 @@ class Voz:
 
     def _ruta(self, texto, idioma):
         s = unicodedata.normalize('NFKD', texto.lower()).encode('ascii', 'ignore').decode()
-        pre = 'en_' if idioma == 'en' else ''      # espanol sin prefijo (audios de versiones previas)
+        pre = 'en_' if idioma == 'en' else ''      # Spanish without prefix (clips from previous versions)
         return os.path.join(self.dir, pre + re.sub(r'[^a-z0-9]+', '_', s).strip('_')[:90] + '.mp3')
 
     def _generar(self, texto, idioma):
-        """Crea el mp3 con edge-tts (si hay internet). True si existe al final."""
+        """Creates the mp3 with edge-tts (needs internet). True if the file exists at the end."""
         ruta = self._ruta(texto, idioma)
         if os.path.exists(ruta):
             return True
@@ -832,46 +821,46 @@ class Voz:
 
 
 # ----------------------------------------------------------------------------
-# SONIFICACION CONTINUA: cada variable es un instrumento que suena SOSTENIDO
-# mientras el dedo esta en el mapa. La altura sigue al dato en tiempo real:
-# valor bajo = grave, valor alto = agudo (2 octavas). La voz habla encima.
+# CONTINUOUS SONIFICATION: each variable is an instrument that plays SUSTAINED
+# while the finger is on the map. The pitch follows the data in real time:
+# low value = low pitch, high value = high pitch (2 octaves). The voice speaks on top.
 # ----------------------------------------------------------------------------
 SR = 44100
-RANGO_SEMITONOS = 24       # 2 octavas entre el valor minimo y el maximo
-PASOS_SEMITONO = 2         # resolucion de la altura (medio semitono)
+RANGO_SEMITONOS = 24       # 2 octaves between the minimum and maximum value
+PASOS_SEMITONO = 2         # pitch resolution (half a semitone)
 N_PASOS = RANGO_SEMITONOS * PASOS_SEMITONO + 1
-LOOP_S = 2.0               # duracion de cada bucle sostenido (se repite sin cortes)
-FUNDIDO_MS = 70            # cruce suave al cambiar de altura
-SUAVIZADO = 0.30           # 0-1: que tan rapido "se desliza" la altura hacia el dato
-VOL_CON_VOZ = 0.45         # volumen del instrumento mientras la voz habla
-VOL_SIN_DATO = 0.25        # volumen si el dedo esta donde esa variable no tiene dato
-GRACIA_DEDO = 0.35         # s que sigue sonando si la camara pierde el dedo un instante
+LOOP_S = 2.0               # length of each sustained loop (repeats seamlessly)
+FUNDIDO_MS = 70            # smooth cross-fade when the pitch changes
+SUAVIZADO = 0.30           # 0-1: how fast the pitch "glides" towards the data
+VOL_CON_VOZ = 0.45         # instrument volume while the voice speaks
+VOL_SIN_DATO = 0.25        # volume when the finger is where the variable has no data
+GRACIA_DEDO = 0.35         # s the sound continues if the camera loses the finger for an instant
 
 
 def sintetizar(timbre, fase, t, f_ref, circular=False):
-    """Genera el instrumento a partir de la fase de la fundamental (radianes)."""
+    """Generates the instrument from the phase of the fundamental (radians)."""
     n = len(t)
     if timbre == 'trompeta':
-        # metal: muchos armonicos con un "formante" brillante cerca de 1.3 kHz
+        # brass: many harmonics with a bright "formant" near 1.3 kHz
         y = np.zeros(n)
         for k in range(1, 16):
             if k * f_ref > 9000:
                 break
             a = (1.0 / k ** 0.6) * (1 + 1.6 * np.exp(-((k * f_ref - 1300) / 750) ** 2))
             y += a * np.sin(k * fase)
-        y = np.tanh(1.8 * y / (np.abs(y).max() + 1e-9))      # aspereza de metal
+        y = np.tanh(1.8 * y / (np.abs(y).max() + 1e-9))      # brassy roughness
     elif timbre == 'organo':
-        # organo grave y denso: armonicos de tubo + una copia desafinada (pulsaciones)
+        # deep, dense organ: pipe harmonics + a detuned copy (beating)
         y = np.zeros(n)
         for k, a in ((1, 1.0), (2, 0.75), (3, 0.5), (4, 0.4), (6, 0.25), (8, 0.18)):
             y += a * np.sin(k * fase)
             y += 0.45 * a * np.sin(k * fase * (1 + 0.5 / max(f_ref * LOOP_S, 1)) if not circular
                                    else k * (fase + 2 * np.pi * 0.5 * t))
     else:
-        # flauta: casi pura, con soplido y un vaiven lento como olas
+        # flute: almost pure, with breath noise and a slow swell like waves
         y = np.sin(fase) + 0.22 * np.sin(2 * fase) + 0.07 * np.sin(3 * fase)
         ruido = np.random.RandomState(3).randn(n)
-        if circular:                                   # ruido que se repite sin corte
+        if circular:                                   # noise that repeats without a seam
             F = np.fft.rfft(ruido)
             fr = np.fft.rfftfreq(n, 1 / SR)
             F *= np.exp(-((fr - 2.5 * f_ref) / (1.2 * f_ref)) ** 2)
@@ -879,16 +868,16 @@ def sintetizar(timbre, fase, t, f_ref, circular=False):
         else:
             ruido = np.convolve(ruido, np.ones(25) / 25, 'same')
         y += 0.35 * ruido / (np.abs(ruido).max() + 1e-9)
-        y *= 0.62 + 0.38 * np.sin(2 * np.pi * (1.0 / LOOP_S) * t)   # oleaje (1 ola por bucle)
+        y *= 0.62 + 0.38 * np.sin(2 * np.pi * (1.0 / LOOP_S) * t)   # swell (1 wave per loop)
     return y
 
 
 def bucle_sostenido(timbre, f):
-    """Nota sostenida de LOOP_S segundos que se puede repetir sin clics."""
+    """Sustained note of LOOP_S seconds that can loop without clicks."""
     n = int(SR * LOOP_S)
     t = np.arange(n) / SR
-    f = max(1, round(f * LOOP_S)) / LOOP_S          # numero entero de ciclos en el bucle
-    vib_f = 5.5 if timbre == 'trompeta' else 5.0    # vibrato (tambien entero en el bucle)
+    f = max(1, round(f * LOOP_S)) / LOOP_S          # whole number of cycles in the loop
+    vib_f = 5.5 if timbre == 'trompeta' else 5.0    # vibrato (also a whole number in the loop)
     prof = {'trompeta': 0.005, 'organo': 0.0, 'flauta': 0.004}.get(timbre, 0.0)
     fase = 2 * np.pi * f * t - (prof * f / vib_f) * np.cos(2 * np.pi * vib_f * t)
     fase -= fase[0]
@@ -898,7 +887,7 @@ def bucle_sostenido(timbre, f):
 
 
 def barrido(timbre, f0, dur=1.4):
-    """Barrido de grave a agudo: indica la direccion del sonido de la variable."""
+    """Low-to-high sweep: shows the pitch direction of the variable."""
     n = int(SR * dur)
     t = np.arange(n) / SR
     f = f0 * 2 ** (RANGO_SEMITONOS / 12 * t / dur)
@@ -927,9 +916,9 @@ class Sonificador:
     def __init__(self, voz):
         self.voz = voz
         self.ok = PG_OK and voz.audio_ok
-        self.var = 1                   # empieza en Temperatura
+        self.var = 1                   # starts on Temperature
         self.mudo = False
-        self.arrays = {}               # (var, paso) -> int16 (se calculan en otro hilo)
+        self.arrays = {}               # (var, step) -> int16 (computed in another thread)
         self.sonidos = {}
         self.actual = self.cand = None
         self.t_cand = 0.0
@@ -942,7 +931,7 @@ class Sonificador:
             self.canal_firma = pygame.mixer.Channel(3)
             threading.Thread(target=self._pregenerar, daemon=True).start()
 
-    # ---- generacion de sonidos ----
+    # ---- sound generation ----
     def _pregenerar(self):
         orden = [self.var] + [i for i in range(len(VARIABLES)) if i != self.var]
         for var in orden:
@@ -993,14 +982,14 @@ class Sonificador:
 
     def seleccionar(self, i):
         self.var = i
-        self._apagar(120)              # cambia de instrumento
+        self._apagar(120)              # change instrument
         self.voz.decir(vt(VARIABLES[i], 'voz'))
         self.firma_pend = True
 
     def actualizar(self, region, norm, hay_dedo):
-        """region: lugar bajo el dedo (o None); norm: dato 0-1 (None = sin dato)."""
+        """region: place under the finger (or None); norm: value 0-1 (None = no data)."""
         ahora = time.time()
-        # 1) decir el lugar cuando el dedo se queda un momento en el (sin cortar el sonido)
+        # 1) say the place when the finger rests on it for a moment (without cutting the sound)
         if region != self.cand:
             self.cand, self.t_cand = region, ahora
         elif region != self.actual and ahora - self.t_cand >= TIEMPO_ESTABLE:
@@ -1012,11 +1001,11 @@ class Sonificador:
         if self.mudo:
             self._apagar(0)
             return
-        # 2) barrido de la variable recien elegida, cuando la voz termina de nombrarla
+        # 2) sweep of the newly selected variable, once the voice finishes naming it
         if self.firma_pend and not self.voz.ocupada():
             self.canal_firma.play(self._firma(self.var))
             self.firma_pend = False
-        # 3) instrumento sostenido mientras el dedo esta en el mapa
+        # 3) sustained instrument while the finger is on the map
         if hay_dedo:
             self.t_dedo = ahora
         if ahora - self.t_dedo > GRACIA_DEDO:
@@ -1026,7 +1015,7 @@ class Sonificador:
             self.norm_obj = norm
             vol_obj = 1.0
         else:
-            vol_obj = VOL_SIN_DATO     # se queda en la ultima altura, mas bajito
+            vol_obj = VOL_SIN_DATO     # keeps the last pitch, quieter
             if self.norm_obj is None:
                 self.norm_obj = 0.5
         if self.norm_suave is None:
@@ -1042,7 +1031,7 @@ class Sonificador:
             if self.paso is not None:
                 self.canales[self.activo].fadeout(FUNDIDO_MS)
             self.activo, self.paso, self.snd, self.t_cambio = nuevo, paso, snd, ahora
-        # 4) volumen: baja un poco mientras la voz habla, pero nunca se corta
+        # 4) volume: lowers a little while the voice speaks, but never cuts out
         if self.voz.ocupada():
             vol_obj *= VOL_CON_VOZ
         self.vol += (vol_obj - self.vol) * 0.25
@@ -1051,16 +1040,16 @@ class Sonificador:
 
 
 # ----------------------------------------------------------------------------
-# CALIBRACION CAMARA <-> MAPA IMPRESO
-# Se marcan en la imagen de la camara las 4 esquinas del mapa (en este orden:
-# 1 sup-izq, 2 sup-der, 3 inf-der, 4 inf-izq). Con eso se calcula una
-# homografia que convierte cualquier punto de la camara a un punto del mapa.
-# No hace falta acomodar la camara "perfecto": basta con que vea todo el mapa.
-# Las esquinas se guardan en calibracion_mapa.json y se cargan al iniciar.
+# CAMERA <-> PRINTED MAP CALIBRATION
+# The 4 corners of the map are marked on the camera image (in this order:
+# 1 top-left, 2 top-right, 3 bottom-right, 4 bottom-left). With them a
+# homography converts any camera point into a map point.
+# The camera does not need to be placed "perfectly": it only has to see the whole map.
+# The corners are saved in calibracion_mapa.json and loaded at startup.
 # ----------------------------------------------------------------------------
 import json
 
-ESPEJO = False   # True = ver la camara como espejo (no afecta la precision)
+ESPEJO = False   # True = mirror the camera view (does not affect precision)
 ARCHIVO_CALIB = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                              'calibracion_mapa.json')
 NOMBRES_ESQ = ['1 Sup-Izq', '2 Sup-Der', '3 Inf-Der', '4 Inf-Izq']
@@ -1072,13 +1061,13 @@ def nombre_esq(i):
 DESTINO = np.float32([[0, 0], [ANCHO-1, 0], [ANCHO-1, ALTO-1], [0, ALTO-1]])
 
 # ----------------------------------------------------------------------------
-# AJUSTE FINO POR PUNTOS DE CONTROL
-# Las 4 esquinas solo "enderezan" el mapa impreso. Pero mapa.jpg tiene margenes
-# blancos y otra proporcion/proyeccion que el mapa 3D, asi que estirar mapa.jpg
-# de esquina a esquina NO hace coincidir los continentes. Por eso se marcan
-# puntos reconocibles: con ellos se calcula una deformacion suave (thin-plate
-# spline) que lleva cada punto del mapa impreso a su punto en mapa.jpg.
-# Coordenadas en pixeles de mapa.jpg (1500x844).
+# FINE ADJUSTMENT WITH CONTROL POINTS
+# The 4 corners only "straighten" the printed map. But mapa.jpg has white
+# margins and a different aspect/projection than the 3D map, so stretching
+# mapa.jpg corner to corner does NOT align the continents. That is why
+# recognizable points are marked: they drive a smooth warp (thin-plate
+# spline) that maps each point of the printed map onto its point in mapa.jpg.
+# Coordinates in pixels of mapa.jpg (1500x844).
 # ----------------------------------------------------------------------------
 PUNTOS_REF = [
     ('Punta oeste de Alaska',              (160, 165)),
@@ -1114,7 +1103,7 @@ PUNTOS_EN = {
     'Cabo Norte (Noruega)': 'North Cape (Norway)',
     'Cabo Chelyuskin (norte de Asia)': 'Cape Chelyuskin (northern Asia)',
 }
-SUAVIDAD = 1e-3   # mas alto = deformacion mas suave (tolera clics imprecisos)
+SUAVIDAD = 1e-3   # higher = smoother warp (tolerates imprecise clicks)
 
 
 def ref_a_pantalla(x, y):
@@ -1122,17 +1111,17 @@ def ref_a_pantalla(x, y):
 
 
 def crear_ajuste(pares):
-    """pares: lista de (px, py, rx, ry). P = mapa impreso enderezado, R = mapa.jpg
-    (ambos en pixeles ANCHO x ALTO). Devuelve f(pts Nx2 en P) -> pts Nx2 en R."""
+    """pares: list of (px, py, rx, ry). P = straightened printed map, R = mapa.jpg
+    (both in ANCHO x ALTO pixels). Returns f(pts Nx2 in P) -> pts Nx2 in R."""
     n = len(pares)
     if n == 0:
         return lambda pts: pts
     a = np.array(pares, np.float64)
     P, R = a[:, :2], a[:, 2:]
-    if n < 3:                                   # solo desplazar
+    if n < 3:                                   # translation only
         d = (R - P).mean(0)
         return lambda pts: pts + d
-    if n < 6:                                   # afin (3) u homografia (4-5)
+    if n < 6:                                   # affine (3) or homography (4-5)
         if n == 3:
             M = cv2.getAffineTransform(P.astype(np.float32), R.astype(np.float32))
             H = np.vstack([M, [0, 0, 1]])
@@ -1145,7 +1134,7 @@ def crear_ajuste(pares):
             q = np.c_[pts, np.ones(len(pts))] @ H.T
             return q[:, :2] / q[:, 2:3]
         return f
-    # thin-plate spline (6 o mas puntos)
+    # thin-plate spline (6 or more points)
     s = float(ANCHO)
     Pn = P / s
     def U(d2):
@@ -1170,14 +1159,14 @@ def crear_ajuste(pares):
 
 class Calibracion:
     def __init__(self):
-        self.esq = []            # esquinas marcadas (en pixeles de la camara)
+        self.esq = []            # marked corners (camera pixels)
         self.H = self.Hinv = None
         self.arrastrando = None
-        self.sel = 0             # esquina seleccionada para ajuste fino con teclado
-        self.puntos = {}         # nombre de PUNTOS_REF -> [px, py] en el mapa enderezado
-        self.k = 0               # punto de control que se esta pidiendo
+        self.sel = 0             # corner selected for keyboard fine adjustment
+        self.puntos = {}         # PUNTOS_REF name -> [px, py] on the straightened map
+        self.k = 0               # control point currently requested
         self.modo_puntos = False
-        self.version = 0         # cambia cada vez que cambia el ajuste
+        self.version = 0         # changes every time the adjustment changes
         self.cargar()
         self._ajustar()
 
@@ -1222,7 +1211,7 @@ class Calibracion:
         self.esq, self.sel = [], 0
         self._calcular()
 
-    # ---- ajuste fino por puntos ----
+    # ---- fine adjustment with points ----
     def _ajustar(self):
         pares = []
         for nm, (rx, ry) in PUNTOS_REF:
@@ -1237,7 +1226,7 @@ class Calibracion:
         self._objetivo = None
 
     def agregar_punto(self, x, y):
-        """Marca el punto de control actual en (x, y) de la camara."""
+        """Marks the current control point at camera position (x, y)."""
         if self.H is None:
             return
         p = cv2.perspectiveTransform(np.float32([[[x, y]]]), self.H)[0, 0]
@@ -1257,7 +1246,7 @@ class Calibracion:
         self._ajustar()
 
     def objetivo_en_camara(self):
-        """Donde la guia cree que esta el punto actual (en la camara)."""
+        """Where the guide expects the current point to be (in the camera)."""
         if self.H is None:
             return None
         if self._objetivo is None or self._objetivo[0] != self.k:
@@ -1270,13 +1259,13 @@ class Calibracion:
         return int(c[0]), int(c[1])
 
     def a_ref(self, p):
-        """Punto del mapa enderezado -> punto en mapa.jpg (para el globo)."""
+        """Point of the straightened map -> point in mapa.jpg (for the globe)."""
         x, y = p
         return (int(np.clip(self.mapx[y, x], 0, ANCHO - 1)),
                 int(np.clip(self.mapy[y, x], 0, ALTO - 1)))
 
     def a_mapa(self, x, y):
-        """Punto de la camara -> punto del mapa (None si cae fuera del mapa)."""
+        """Camera point -> map point (None if it falls outside the map)."""
         if self.H is None:
             return None
         p = cv2.perspectiveTransform(np.float32([[[x, y]]]), self.H)[0, 0]
@@ -1291,14 +1280,14 @@ class Calibracion:
                 self.agregar_punto(x, y)
             return
         if evento == cv2.EVENT_LBUTTONDOWN:
-            if len(self.esq) < 4:                         # marcar la siguiente esquina
+            if len(self.esq) < 4:                         # mark the next corner
                 self.esq.append([float(x), float(y)])
                 self.sel = len(self.esq) - 1
                 self._calcular()
                 return
             d = [np.hypot(x - px, y - py) for px, py in self.esq]
             i = int(np.argmin(d))
-            if d[i] < 45:                                 # agarrar la esquina mas cercana
+            if d[i] < 45:                                 # grab the nearest corner
                 self.arrastrando = self.sel = i
         elif evento == cv2.EVENT_MOUSEMOVE and self.arrastrando is not None:
             self.esq[self.arrastrando] = [float(x), float(y)]
@@ -1315,7 +1304,7 @@ class Calibracion:
 
 def dibujar_calibracion(frame, calib, mapa_guia, ver_guia, mini):
     vis = frame.copy()
-    # Mapa virtual "proyectado" sobre la camara para comprobar que coincide
+    # virtual map "projected" over the camera to check that it matches
     if calib.lista and ver_guia:
         sup = cv2.warpPerspective(mapa_guia, calib.Hinv, (ANCHO, ALTO))
         m = cv2.warpPerspective(np.full((ALTO, ANCHO), 255, np.uint8),
@@ -1336,7 +1325,7 @@ def dibujar_calibracion(frame, calib, mapa_guia, ver_guia, mini):
 
     puntos_on = calib.modo_puntos and calib.lista
     if puntos_on:
-        # puntos ya marcados (verde) y donde la guia cree que esta el actual (amarillo)
+        # points already marked (green) and where the guide expects the current one (yellow)
         for nm, (px, py) in calib.puntos.items():
             c = cv2.perspectiveTransform(np.float32([[[px, py]]]), calib.Hinv)[0, 0]
             cv2.circle(vis, (int(c[0]), int(c[1])), 7, (0, 200, 0), -1, cv2.LINE_AA)
@@ -1374,7 +1363,7 @@ def dibujar_calibracion(frame, calib, mapa_guia, ver_guia, mini):
     for k, t in enumerate(lineas):
         texto(vis, t, (20, y0 + 26 + 30 * k), 0.6, (255, 255, 255), 1)
 
-    # margen derecho (fuera de la camara) con el mapa pequeno del punto a marcar
+    # right margin (outside the camera) with the small map of the point to mark
     lienzo = np.full((ALTO, ANCHO + MARGEN_CALIB, 3), FONDO, np.uint8)
     lienzo[:, :ANCHO] = vis
     mw = MARGEN_CALIB - 30
@@ -1397,10 +1386,10 @@ def dibujar_calibracion(frame, calib, mapa_guia, ver_guia, mini):
     return lienzo
 
 
-MARGEN_CALIB = 340    # ancho del margen derecho en la pantalla de calibracion
+MARGEN_CALIB = 340    # width of the right margin on the calibration screen
 
 # ----------------------------------------------------------------------------
-# INTERFAZ: lienzo con margen, mapa centrado y la informacion en los margenes
+# INTERFACE: canvas with margins, centered map and information in the margins
 # ----------------------------------------------------------------------------
 FUENTE = cv2.FONT_HERSHEY_SIMPLEX
 FONDO = (32, 24, 18)
@@ -1409,9 +1398,9 @@ BLANCO = (245, 245, 245)
 VISTAS = ['camara', 'datos NASA', 'mezcla']
 
 
-# Textos nitidos con la fuente de Windows (Segoe UI) usando Pillow. Si no hay
-# Pillow o la fuente, se usa la letra de OpenCV como antes.
-ESCALA_LETRA = 31          # px de letra por cada 1.0 de "esc" (equivale a OpenCV)
+# Sharp text with the Windows font (Segoe UI) using Pillow. Without Pillow
+# or the font, the OpenCV font is used as before.
+ESCALA_LETRA = 31          # font px per 1.0 of "esc" (equivalent to OpenCV)
 try:
     from PIL import Image, ImageDraw, ImageFont
     _RUTAS_LETRA = {False: [r'C:\Windows\Fonts\segoeui.ttf', r'C:\Windows\Fonts\arial.ttf',
@@ -1439,7 +1428,7 @@ def _letra(px, negrita):
 
 
 def _sprite(s, esc, grosor):
-    """Mascara (alfa) del texto ya dibujado; se guarda para no redibujarlo cada cuadro."""
+    """Alpha mask of the rendered text; cached so it is not redrawn every frame."""
     clave = (s, esc, grosor)
     sp = _SPRITES.get(clave)
     if sp is None:
@@ -1493,7 +1482,7 @@ def texto(img, s, org, esc=0.6, color=BLANCO, grosor=1, centro=False, derecha=Fa
 
 
 def texto_ajustado(img, s, org, ancho_max, esc=0.8, color=BLANCO, grosor=2, salto=36):
-    """Escribe s partiendo en renglones para que quepa en ancho_max."""
+    """Writes s split into lines so that it fits in ancho_max."""
     renglon, y = '', org[1]
     for palabra in s.split(' '):
         prueba = (renglon + ' ' + palabra).strip()
@@ -1507,20 +1496,20 @@ def texto_ajustado(img, s, org, ancho_max, esc=0.8, color=BLANCO, grosor=2, salt
 
 
 def a_lienzo(p):
-    """Punto del mapa enderezado (ANCHO x ALTO) -> punto del lienzo."""
+    """Point of the straightened map (ANCHO x ALTO) -> canvas point."""
     return (int(MAP_X + p[0] * MAP_W / ANCHO), int(MAP_Y + p[1] * MAP_H / ALTO))
 
 
 def dibujar_margenes(lienzo, var, datos, son, voz, region, valor, vista, en_mapa):
     v = VARIABLES[var]
-    # ---------------- margen superior ----------------
+    # ---------------- top margin ----------------
     texto(lienzo, T('EARTH JUKEBOX  -  Mapa tactil inclusivo', 'EARTH JUKEBOX  -  Inclusive tactile map'),
           (CANVAS_W // 2, 62), 1.25, BLANCO, 2, centro=True)
     texto(lienzo, f'{T("Escuchando", "Listening")}: {vt(v, "nombre")}   |   {vt(v, "fuente")[0]}' +
           (f'   |   {T("dato del", "data from")} {v["fecha"]}' if v['fecha'] else ''),
           (CANVAS_W // 2, 112), 0.7, v['color'], 2, centro=True)
 
-    # ---------------- margen izquierdo: variables ----------------
+    # ---------------- left margin: variables ----------------
     x0 = 25
     texto(lienzo, T('VARIABLES NASA', 'NASA VARIABLES'), (x0, MAP_Y + 30), 0.75, GRIS, 2)
     for i, w in enumerate(VARIABLES):
@@ -1538,7 +1527,7 @@ def dibujar_margenes(lienzo, var, datos, son, voz, region, valor, vista, en_mapa
               ('' if est == 'listo' else f'  ({tr_dic(est, ESTADO_EN)})'),
               (x0 + 65, y + 56), 0.48, c, 1)
 
-    # ---------------- margen derecho: panel de informacion ----------------
+    # ---------------- right margin: information panel ----------------
     xd, ancho = MAP_X + MAP_W + 25, CANVAS_W - (MAP_X + MAP_W) - 45
     y = MAP_Y + 30
     texto(lienzo, T('LUGAR', 'PLACE'), (xd, y), 0.6, GRIS, 1)
@@ -1558,7 +1547,7 @@ def dibujar_margenes(lienzo, var, datos, son, voz, region, valor, vista, en_mapa
         val_txt = v['fmt'](valor)
     texto(lienzo, val_txt, (xd, y + 48), 1.15, BLANCO, 2)
     y += 80
-    # barra de colores NASA con la marca del valor
+    # NASA color bar with the value marker
     if datos.listo(var):
         lo, hi = datos.rango[var]
         barra = np.repeat(datos.barra[var][None], 26, 0)
@@ -1581,7 +1570,7 @@ def dibujar_margenes(lienzo, var, datos, son, voz, region, valor, vista, en_mapa
           (xd, y + 30), 0.55, BLANCO, 1)
     texto(lienzo, voz.motor[:34], (xd, y + 56), 0.45, GRIS, 1)
 
-    # ---------------- margen inferior ----------------
+    # ---------------- bottom margin ----------------
     texto(lienzo, nombre_mostrar(region), (CANVAS_W // 2, MAP_Y + MAP_H + 70), 1.4, BLANCO, 3, centro=True)
     vista_t = tr_dic(vista, VISTA_EN)
     texto(lienzo, T(f'1 CO2   2 Temperatura   3 Altitud   i = decir valor   s = silencio   v = vista ({vista_t})   '
@@ -1600,10 +1589,10 @@ def texto_valor_voz(var, region, valor):
 
 # ----------------------------------------------------------------------------
 class Camara:
-    """Abre la camara igual que el programa de la banda: prueba MSMF, DSHOW y AUTO,
-    primero pidiendo CAPTURA y, si asi no da imagen, con la resolucion propia de la
-    camara. Lee en un hilo aparte y entrega siempre el cuadro mas reciente.
-    Tambien acepta una URL (telefono por Wi-Fi) y se reconecta si se corta."""
+    """Opens the camera trying MSMF, DSHOW and AUTO, first requesting CAPTURA and,
+    if that gives no image, with the camera's own resolution. Reads in a separate
+    thread and always returns the newest frame.
+    Also accepts a URL (phone over Wi-Fi) and reconnects if the stream drops."""
 
     def __init__(self, fuente, resolucion=None):
         self.fuente = fuente
@@ -1632,7 +1621,7 @@ class Camara:
         if resolucion:
             cap.set(cv2.CAP_PROP_FRAME_WIDTH, resolucion[0])
             cap.set(cv2.CAP_PROP_FRAME_HEIGHT, resolucion[1])
-        for _ in range(30):                      # hasta ~3 s esperando imagen
+        for _ in range(30):                      # up to ~3 s waiting for an image
             ok, f = cap.read()
             if ok and f is not None:
                 txt = f'{resolucion[0]}x{resolucion[1]} pedida' if resolucion else 'resolucion propia'
@@ -1670,7 +1659,7 @@ class Camara:
                 continue
             fallos += 1
             time.sleep(0.05)
-            if fallos > 40:                      # ~2 s sin imagen: reconectar
+            if fallos > 40:                      # ~2 s without an image: reconnect
                 print('Camara sin imagen, reconectando...')
                 self.cap.release()
                 time.sleep(1)
@@ -1698,7 +1687,7 @@ def rotar_cuadro(img, grados):
 
 
 def detectar_franjas(img):
-    """Zona util sin las franjas negras de DroidCam (x, y, w, h), o None si no hay."""
+    """Useful area without DroidCam's black bars (x, y, w, h), or None if there are none."""
     gris = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     cols = np.where(gris.max(axis=0) > 25)[0]
     filas = np.where(gris.max(axis=1) > 25)[0]
@@ -1713,7 +1702,7 @@ def detectar_franjas(img):
 
 
 def acomodar_horizontal(img, grados, recorte):
-    """Rota, quita franjas y mete la imagen en ANCHO x ALTO (horizontal) sin deformarla."""
+    """Rotates, removes bars and fits the image in ANCHO x ALTO (landscape) without distortion."""
     img = rotar_cuadro(img, grados)
     if recorte:
         x, y, w, h = recorte
@@ -1721,7 +1710,7 @@ def acomodar_horizontal(img, grados, recorte):
     h, w = img.shape[:2]
     if (w, h) == (ANCHO, ALTO):
         return img
-    if LLENAR:                                   # cubrir todo: recorte centrado
+    if LLENAR:                                   # fill everything: centered crop
         if w / h > ANCHO / ALTO:
             nw = int(round(h * ANCHO / ALTO)); x0 = (w - nw) // 2
             img = img[:, x0:x0 + nw]
@@ -1744,7 +1733,7 @@ def acomodar_horizontal(img, grados, recorte):
 def main():
     cap = Camara(CAMARA, CAPTURA)
     rotacion = ROTAR
-    recorte = None                 # franjas negras: se miden una vez al arrancar
+    recorte = None                 # black bars: measured once at startup
     t_cam = time.time()
 
     mapa = cargar_mapa()
@@ -1798,7 +1787,7 @@ def main():
         if ESPEJO:
             frame = cv2.flip(frame, 1)
 
-        # Capas deformadas para coincidir con el mapa impreso (se recalculan solo si cambia algo)
+        # Layers warped to match the printed map (recomputed only when something changes)
         if calib.version != ver_ajuste:
             ver_ajuste = calib.version
             mx, my = calib.mapx, calib.mapy
@@ -1812,7 +1801,7 @@ def main():
             capa_M = cv2.resize(capa_P, (MAP_W, MAP_H), interpolation=cv2.INTER_NEAREST)
             bordes_M = cv2.resize(bordes_P.astype(np.uint8), (MAP_W, MAP_H), interpolation=cv2.INTER_NEAREST) > 0
             ver_datos = -1
-        if datos.version != ver_datos:            # imagenes NASA llevadas al mapa impreso
+        if datos.version != ver_datos:            # NASA images mapped onto the printed map
             ver_datos = datos.version
             lon_M = cv2.resize(lon_P.astype(np.float32), (MAP_W, MAP_H))
             lat_M = cv2.resize(lat_P.astype(np.float32), (MAP_W, MAP_H))
@@ -1821,7 +1810,7 @@ def main():
             datos_M = [cv2.remap(datos.imagen[i], dx, dy, cv2.INTER_LINEAR, borderMode=cv2.BORDER_WRAP)
                        if datos.listo(i) else None for i in range(len(VARIABLES))]
 
-        # 1) dedo en la camara -> 2) punto en el mapa -> 3) lugar y dato NASA
+        # 1) finger in the camera -> 2) point on the map -> 3) place and NASA value
         puntas = detector.puntas(frame)
         en_mapa = None
         for (px, py) in puntas:
@@ -1847,7 +1836,7 @@ def main():
 
         son.actualizar(region if en_mapa is not None else None, norm, en_mapa is not None)
 
-        # ------------------------- MODO CALIBRACION -------------------------
+        # ------------------------- CALIBRATION MODE -------------------------
         if estado['calibrando']:
             vis = dibujar_calibracion(frame, calib, guia_P, ver_guia, mini)
             for (px, py) in puntas:
@@ -1855,7 +1844,7 @@ def main():
                 cv2.circle(vis, (px, py), 16, (255, 255, 255), 2)
             texto(vis, f'{T("Lugar", "Place")}: {nombre_mostrar(region)}', (20, ALTO - 25), 0.8, (0, 0, 0), 5)
             texto(vis, f'{T("Lugar", "Place")}: {nombre_mostrar(region)}', (20, ALTO - 25), 0.8, BLANCO, 2)
-        # ---------------------------- MODO USO ------------------------------
+        # ---------------------------- USE MODE ------------------------------
         else:
             vis = np.full((CANVAS_H, CANVAS_W, 3), FONDO, np.uint8)
             esc = np.array([[MAP_W / ANCHO, 0, 0], [0, MAP_H / ALTO, 0], [0, 0, 1]])
@@ -1892,7 +1881,7 @@ def main():
             if t == ord('p') and calib.lista:
                 calib.modo_puntos = not calib.modo_puntos
             if calib.modo_puntos and calib.lista:
-                if t == 32 and puntas: calib.agregar_punto(*puntas[0])   # ESPACIO = dedo
+                if t == 32 and puntas: calib.agregar_punto(*puntas[0])   # SPACE = fingertip
                 if t == ord('n'): calib.k = (calib.k + 1) % len(PUNTOS_REF)
                 if t == ord('b'): calib.k = (calib.k - 1) % len(PUNTOS_REF)
                 if t == ord('x'): calib.borrar_punto()

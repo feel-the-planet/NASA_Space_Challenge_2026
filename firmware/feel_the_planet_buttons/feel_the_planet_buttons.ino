@@ -1,68 +1,94 @@
-/*
-  Feel the Planet! - Button panel as a Bluetooth keyboard (ESP32 classic / ESP-WROOM-32)
+// Feel the Planet! - Button panel as a Bluetooth keyboard (NASA Space Apps 2026)
+// Board: ESP32 DevKit (ESP-WROOM-32). Buttons on GPIO 32, 25, 26 and 27.
+//
+//   GPIO 32  Temperature button -> key '2'  (trumpet)
+//   GPIO 25  CO2 button         -> key '1'  (organ)
+//   GPIO 26  Elevation button   -> key '3'  (flute)
+//   GPIO 27  Language button    -> key 'l'  (English / Spanish)
+// The keys match the app: 1 = CO2, 2 = Temperature, 3 = Elevation, l = language.
+//
+// Wiring: each button between its GPIO and GND (internal pull-up, pressed = LOW).
+// Library: "ESP32 BLE Keyboard" by T-vK - https://github.com/T-vK/ESP32-BLE-Keyboard
 
-  Each button sends the same key the app already uses, so the Python app
-  needs no changes. Wire every button between its GPIO and GND
-  (internal pull-up, no resistors needed).
-
-  Library: "ESP32 BLE Keyboard" by T-vK  (Arduino Library Manager or GitHub)
-  Board:   "ESP32 Dev Module"
-  Note:    if it does not compile with esp32 core 3.x, install esp32 core 2.0.17
-           (Tools > Board > Boards Manager > esp32).
-
-  First use: Windows Settings > Bluetooth & devices > Add device > Bluetooth >
-             "Feel the Planet Buttons". The blue LED (GPIO 2) turns on when connected.
-*/
 #include <BleKeyboard.h>
 
-BleKeyboard teclado("Feel the Planet Buttons", "Feel the Planet", 100);
+// Name shown in the Bluetooth list of the computer / phone
+BleKeyboard bleKeyboard("Feel the Planet", "Hackatec", 100);
 
-struct Boton { uint8_t pin; char tecla; const char *funcion; };
+struct Boton {
+  uint8_t pin;
+  const char* nombre;
+  char tecla;
+  bool estadoEstable;
+  bool lecturaAnterior;
+  unsigned long ultimoCambio;
+};
 
 Boton botones[] = {
-  {13, '1', "CO2 (organ)"},
-  {14, '2', "Temperature (trumpet)"},
-  {27, '3', "Elevation (flute)"},
-  {26, 'l', "Language EN / ES"},
+  {32, "Temperature", '2', HIGH, HIGH, 0},
+  {25, "CO2",         '1', HIGH, HIGH, 0},
+  {26, "Elevation",   '3', HIGH, HIGH, 0},
+  {27, "Language",    'l', HIGH, HIGH, 0},
 };
-const int N = sizeof(botones) / sizeof(botones[0]);
-const uint8_t LED = 2;              // blue LED on the board
-const unsigned long REBOTE_MS = 40; // debounce
 
-bool estable[N];
-bool lectura_ant[N];
-unsigned long t_cambio[N];
+const int NUM_BOTONES = sizeof(botones) / sizeof(botones[0]);
+const unsigned long DEBOUNCE_MS = 30;
+
+bool estabaConectado = false;
 
 void setup() {
   Serial.begin(115200);
-  pinMode(LED, OUTPUT);
-  for (int k = 0; k < N; k++) {
-    pinMode(botones[k].pin, INPUT_PULLUP);
-    estable[k] = lectura_ant[k] = HIGH;
-    t_cambio[k] = 0;
+  delay(500);
+
+  for (int i = 0; i < NUM_BOTONES; i++) {
+    pinMode(botones[i].pin, INPUT_PULLUP);
   }
-  teclado.begin();
-  Serial.println("Feel the Planet buttons ready. Pair 'Feel the Planet Buttons' via Bluetooth.");
+
+  bleKeyboard.begin();
+
+  Serial.println();
+  Serial.println("=== Feel the Planet button panel (BLE) ===");
+  Serial.println("Pair 'Feel the Planet' in the Bluetooth settings of your computer.");
 }
 
 void loop() {
-  bool conectado = teclado.isConnected();
-  digitalWrite(LED, conectado ? HIGH : LOW);
+  // Report connection changes on the serial monitor
+  bool conectado = bleKeyboard.isConnected();
+  if (conectado != estabaConectado) {
+    estabaConectado = conectado;
+    Serial.println(conectado ? ">> Bluetooth connected" : ">> Bluetooth disconnected");
+  }
 
-  for (int k = 0; k < N; k++) {
-    bool lectura = digitalRead(botones[k].pin);
-    if (lectura != lectura_ant[k]) {       // something changed: restart debounce timer
-      t_cambio[k] = millis();
-      lectura_ant[k] = lectura;
+  unsigned long ahora = millis();
+
+  for (int i = 0; i < NUM_BOTONES; i++) {
+    Boton &b = botones[i];
+    bool lectura = digitalRead(b.pin);
+
+    if (lectura != b.lecturaAnterior) {          // debounce
+      b.ultimoCambio = ahora;
+      b.lecturaAnterior = lectura;
     }
-    if (millis() - t_cambio[k] > REBOTE_MS && lectura != estable[k]) {
-      estable[k] = lectura;
-      if (estable[k] == LOW) {             // button pressed
-        Serial.printf("Button GPIO %d -> '%c' (%s)%s\n", botones[k].pin, botones[k].tecla,
-                      botones[k].funcion, conectado ? "" : "  [not connected]");
-        if (conectado) teclado.write(botones[k].tecla);
+
+    if ((ahora - b.ultimoCambio) > DEBOUNCE_MS && lectura != b.estadoEstable) {
+      b.estadoEstable = lectura;
+
+      if (b.estadoEstable == LOW) {              // pressed
+        Serial.print("Pressed: ");
+        Serial.print(b.nombre);
+        Serial.print(" -> '");
+        Serial.print(b.tecla);
+        Serial.print("'");
+
+        if (conectado) {
+          bleKeyboard.write(b.tecla);            // press and release the key
+          Serial.println("  [sent]");
+        } else {
+          Serial.println("  [not connected, not sent]");
+        }
       }
     }
   }
-  delay(2);
+
+  delay(1);
 }

@@ -16,6 +16,16 @@
 
 ---
 
+## Demo
+
+<p align="center">
+  <img src="demo/preview.gif" width="270" alt="Feel the Planet demo">
+</p>
+
+▶️ **[Watch the 30-second demo video (English subtitles)](demo/feel_the_planet_demo.mp4)** · more in [demo/](demo/)
+
+---
+
 ## What it does
 
 You **touch a 3D-printed relief map of the Earth**. A camera above the map tracks your index finger, and the computer **turns real NASA data at that spot into sound**:
@@ -74,10 +84,11 @@ NASA_Space_Challenge_2026/
 │   ├── ai-disclosure.md       # Use of AI in this project
 │   └── images/                # Diagrams and NASA layer previews
 ├── hardware/
-│   └── printable-maps/        # STL files of the 3D relief map
-├── firmware/                  # ESP32 button panel (Bluetooth keyboard)
+│   ├── printable-maps/        # STL files of the 3D relief map
+│   └── button-panel/          # Button box: SolidWorks parts, parts list, photo
+├── firmware/                  # ESP32 button panel code (Bluetooth keyboard)
 ├── datasets/                  # How the NASA data is obtained (no data files in Git)
-└── demo/                      # Photos and demo video
+└── demo/                      # Demo video (subtitled), preview GIF and screenshots
 ```
 
 ---
@@ -142,7 +153,7 @@ Details, conversion method and limitations: **[docs/nasa-data.md](docs/nasa-data
 - 3D-printed relief map of the Earth, 48 × 29 cm, printed in 4 tiles: [hardware/printable-maps](hardware/printable-maps)
 - An overhead camera on a fixed mount (webcam, or a phone over USB/Wi-Fi)
 - A computer with speakers or headphones
-- Optional **button panel**: an ESP32 acting as a Bluetooth keyboard, with 4 buttons: CO₂, temperature, elevation and language. See [firmware/](firmware/)
+- **Button panel**: a 3D-printed box with 4 arcade push buttons (CO₂, temperature, elevation, language) and an ESP32 that works as a Bluetooth keyboard, using the [ESP32 BLE Keyboard](https://github.com/T-vK/ESP32-BLE-Keyboard) library. CAD and parts: [hardware/button-panel](hardware/button-panel) · code: [firmware/](firmware/)
 
 ---
 
