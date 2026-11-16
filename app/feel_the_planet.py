@@ -3,7 +3,7 @@ EARTH JUKEBOX / Feel the Planet! - Inclusive tactile map (version 2.3.8)
 Detects the index finger on the 3D-printed physical map, SPEAKS the place being
 touched and SONIFIES real NASA data at that point.
 
-What's new in 2.3.8 (based on 2.3.5)
+What's new in 2.3.8
   - 17 fine-adjustment points (new: Los Angeles, Peru-Colombia-Brazil tri-border,
     northern Greenland, North Cape and Cape Chelyuskin). See guia_puntos_calibracion.png.
   - During calibration the guide map is no longer drawn over the camera: only the
